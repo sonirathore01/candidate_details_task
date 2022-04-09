@@ -1,0 +1,9 @@
+Frontend:
+
+1. Go to candidate folder and do npm install
+2. ng serve
+
+Backend:
+
+1. Go to demo folder and do npm install
+2. npm run start
