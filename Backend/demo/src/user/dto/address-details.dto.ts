@@ -1,7 +1,5 @@
 import {
-  IsEmail,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -27,7 +25,7 @@ export class AddressDetailsDto {
   @IsString()
   province: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  postalCode: number;
+  @IsOptional()
+  @IsString()
+  postalCode: string;
 }

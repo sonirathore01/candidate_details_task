@@ -4,17 +4,19 @@ import { AddressDetailsDto } from '../dto/address-details.dto';
 import { Address } from '../schema/address.schema';
 import { SocialProfileSchema } from '../schema/social-profile.schema';
 import { SocialMediaProfileDetailsDto } from '../dto/social-media-profile-details.dto';
+import { PhoneNumberDetailsDto } from '../dto/phone-number-details.dto';
+import {PhoneNumberSchema} from "../schema/phone-number.schema";
 
 export class UserMapper {
   public static toDomain(data: any, address): User {
     const dto = new User();
-    dto.identifierNumber = data.user.identifierNumber;
-    dto.firstName = data.user.firstName;
-    dto.lastName = data.user.lastName;
-    dto.emailAddress = data.user.emailAddress;
-    dto.phoneNumber = data.user.phoneNumber;
+    dto.identifierNumber = data.identifierNumber;
+    dto.firstName = data.firstName;
+    dto.lastName = data.lastName;
+    dto.emailAddress = data.emailAddress;
+    dto.phoneNumber = this.toPhoneNumber(data.phoneNumber);
     dto.address = address;
-    dto.socialProfile = this.toSocialProfile(data.socialMediaProfile);
+    dto.socialProfile = this.toSocialProfile(data.socialProfile);
 
     return dto;
   }
@@ -42,6 +44,16 @@ export class UserMapper {
     dto.linkedin = data.linkedin;
     dto.twitter = data.twitter;
     dto.facebook = data.facebook;
+
+    return dto;
+  }
+
+  public static toPhoneNumber(
+      data: PhoneNumberDetailsDto,
+  ): PhoneNumberSchema {
+    const dto = new PhoneNumberSchema();
+    dto.countryCode = data.countryCode;
+    dto.number = data.number;
 
     return dto;
   }

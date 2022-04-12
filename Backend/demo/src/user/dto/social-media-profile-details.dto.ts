@@ -1,15 +1,15 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class SocialMediaProfileDetailsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   linkedin: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   facebook: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   twitter: string;
 }

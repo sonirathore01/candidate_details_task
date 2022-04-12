@@ -22,7 +22,7 @@ export class Address {
   province: string;
 
   @Prop()
-  postalCode: number;
+  postalCode: string;
 }
 
 export const AddressSchema = SchemaFactory.createForClass(Address);

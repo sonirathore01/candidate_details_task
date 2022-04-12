@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Countries} from "../model/Countries.model";
+import {Countries} from "../model/countries.model";
 import {AbstractControl, ValidationErrors, ValidatorFn} from "@angular/forms";
 
 @Injectable({
@@ -266,7 +266,7 @@ export class UtilityService {
       let correct = true;
       let text = '';
 
-      let idNumber = control.value.replaceAll(' ', '');
+      let idNumber = control.value ? control.value.replaceAll(' ', '') : '';
       //Ref: http://www.sadev.co.za/content/what-south-african-id-number-made
       // SA ID Number have to be 13 digits, so check the length
       if (idNumber.length != 13 || !Number.isInteger(+idNumber)) {

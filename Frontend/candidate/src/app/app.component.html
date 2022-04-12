@@ -18,7 +18,7 @@
 
     <ng-container matColumnDef="phoneNumber">
       <th mat-header-cell *matHeaderCellDef> Phone Number </th>
-      <td mat-cell *matCellDef="let element"> {{element.phoneNumber}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.phoneNumber.countryCode ? '+' + element.phoneNumber.countryCode + " " + element.phoneNumber.number : ''}} </td>
     </ng-container>
 
     <ng-container matColumnDef="action">

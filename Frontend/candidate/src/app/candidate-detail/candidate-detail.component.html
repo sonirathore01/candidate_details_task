@@ -2,239 +2,245 @@
   <h2 mat-dialog-title>{{modalTitle}}</h2>
   <mat-dialog-content class="mat-typography">
     <form [formGroup]="candidateFrom">
-      <div class="mat-form-wrapper">
-
-        <div class="form-group">
-          <label>Full Name</label>
-          <mat-form-field>
-            <input matInput placeholder="First Name" formControlName="firstName">
-            <mat-error
-              *ngIf="getCandidateFrom.get('firstName')?.touched && getCandidateFrom.get('firstName')?.errors && getCandidateFrom.get('firstName')?.errors?.required">
-              First Name is required
-            </mat-error>
-            <mat-error
-              *ngIf="getCandidateFrom.get('firstName')?.touched && getCandidateFrom.get('firstName')?.errors && getCandidateFrom.get('firstName')?.errors?.minlength">
-              minimum Two character are required
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-group">
-          <label></label>
-          <mat-form-field>
-            <input matInput floatLabel="always" placeholder="Last Name" formControlName="lastName">
-            <mat-error
-              *ngIf="getCandidateFrom.get('lastName')?.touched && getCandidateFrom.get('lastName')?.errors && getCandidateFrom.get('lastName')?.errors?.required">
-              Last Name is required
-            </mat-error>
-            <mat-error
-              *ngIf="getCandidateFrom.get('lastName')?.touched && getCandidateFrom.get('lastName')?.errors && getCandidateFrom.get('lastName')?.errors?.minlength">
-              minimum Two character are required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="mat-form-wrapper">
-        <div class="form-group">
-          <label> Email Address</label>
-          <div class="mat-icon-wrapper">
-            <mat-form-field>
-              <input matInput placeholder="Email Address" formControlName="emailAddress">
-              <mat-error
-                *ngIf="getCandidateFrom.get('emailAddress')?.touched && getCandidateFrom.get('emailAddress')?.errors && getCandidateFrom.get('emailAddress')?.errors?.required">
-                Email Address is required
-              </mat-error>
-              <mat-error
-                *ngIf="getCandidateFrom.get('emailAddress')?.touched && getCandidateFrom.get('emailAddress')?.errors && getCandidateFrom.get('emailAddress')?.errors?.email">
-                Enter valid Email Address
-              </mat-error>
-            </mat-form-field>
-            <ng-container *ngIf="getCandidateFrom.get('emailAddress')?.touched && !getCandidateFrom.get('emailAddress')?.valid">
-              <div class="icon-wrap">
-                <img src="../../assets/images/error.svg"></div>
-            </ng-container>
-            <ng-container *ngIf="getCandidateFrom.get('emailAddress')?.touched && getCandidateFrom.get('emailAddress')?.valid">
-              <div class="icon-wrap">
-                <img src="../../assets/images/correct.svg"></div>
-            </ng-container>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Mobile Number</label>
-          <mat-form-field>
-            <div class="code-wrap" *ngIf="dialCode">+{{dialCode}}</div>
-            <input matInput formControlName="phoneNumber" ng2TelInput (countryChange)="onCountryChange($event)"
-                   (ng2TelOutput)="getNumber($event)" (intlTelInputObject)="telInputObject($event)"/>
-            <mat-error
-              *ngIf="getCandidateFrom.get('phoneNumber')?.touched && getCandidateFrom.get('phoneNumber')?.errors && getCandidateFrom.get('phoneNumber')?.errors?.required">
-              Mobile Number is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="mat-form-wrapper border-bottom">
-        <div class="form-group ">
-          <label>South African Identity Number</label>
-
-          <div class="mat-icon-wrapper">
-            <mat-form-field>
-              <input matInput placeholder="South African Identity Number" formControlName="identifierNumber">
-              <mat-error
-                *ngIf="getCandidateFrom.get('identifierNumber')?.touched && getCandidateFrom.get('identifierNumber')?.errors && getCandidateFrom.get('identifierNumber')?.errors?.required">
-                South African Identity Number is required
-              </mat-error>
-              <mat-error
-                *ngIf="getCandidateFrom.get('identifierNumber')?.touched && utilityService.checkLuhn() && !getCandidateFrom.get('identifierNumber')?.errors?.required">
-                Please enter a valid South African Identity Number
-              </mat-error>
-            </mat-form-field>
-            <ng-container *ngIf="getCandidateFrom.get('identifierNumber')?.touched && !getCandidateFrom.get('identifierNumber')?.valid">
-              <div class="icon-wrap">
-                <img src="../../assets/images/error.svg"></div>
-            </ng-container>
-            <ng-container *ngIf="getCandidateFrom.get('identifierNumber')?.touched && getCandidateFrom.get('identifierNumber')?.valid">
-              <div class="icon-wrap">
-                <img src="../../assets/images/correct.svg"></div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div class="social-link-wrapper">
-        <div class="mat-form-wrapper">
-          <div class="form-group add-space">
-            <label>Physical Address</label>
-            <mat-form-field>
-              <!--        <input matInput placeholder="Start Typing Your Address" formControlName="address">-->
-              <input
-                matInput
-                placeholder="Start Typing Your Address"
-                formControlName="addressLine1"
-                ngx-google-places-autocomplete
-                #placesRef="ngx-places"
-                (onAddressChange)="handleAddressChange($event)"
-              />
-              <mat-error
-                *ngIf="getCandidateFrom.get('addressLine1')?.touched && getCandidateFrom.get('addressLine1')?.errors && getCandidateFrom.get('addressLine1')?.errors?.required">
-                Address is required
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div class="form-group">
-            <label class="reset-label" (click)="reset()">Reset</label>
-            <mat-form-field>
-              <input type="text"
-                     placeholder="Country"
-                     matInput
-                     formControlName="country"
-                     [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name">
-                  {{option.name}}
-                </mat-option>
-              </mat-autocomplete>
-              <mat-error
-                *ngIf="getCandidateFrom.get('country')?.touched && getCandidateFrom.get('country')?.errors && getCandidateFrom.get('country')?.errors?.required">
-                Country is required
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-
-
-      </div>
-
-      <div class="mat-form-wrapper">
-        <div class="form-group">
-          <mat-form-field>
-            <input matInput formControlName="addressLine2" placeholder="Address line 2 (Optional)">
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="mat-form-wrapper border-bottom">
-        <div class="form-group">
-
-          <mat-form-field>
-            <input matInput placeholder="City" formControlName="city">
-            <mat-error
-              *ngIf="getCandidateFrom.get('city')?.touched && getCandidateFrom.get('city')?.errors && getCandidateFrom.get('city')?.errors?.required">
-              City is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-group">
-
-          <mat-form-field>
-            <input matInput placeholder="Province" formControlName="province">
-            <mat-error
-              *ngIf="getCandidateFrom.get('province')?.touched && getCandidateFrom.get('province')?.errors && getCandidateFrom.get('province')?.errors?.required">
-              Province is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-group">
-
-          <mat-form-field>
-            <input matInput placeholder="Postal Code" formControlName="postalCode">
-            <mat-error
-              *ngIf="getCandidateFrom.get('postalCode')?.touched && getCandidateFrom.get('postalCode')?.errors && getCandidateFrom.get('postalCode')?.errors?.required">
-              Postal Code is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-
-      <div class="social-link-wrapper">
+      <div>
         <div class="mat-form-wrapper">
           <div class="form-group">
-            <label>
-              Social Media Profiles
-            </label>
+            <label>Full Name</label>
             <mat-form-field>
-              <div class="place-site" matPrefix>www.linkedin.com/in/</div>
-              <input class="social-input" matInput formControlName="linkedin" (blur)="getRequireData('linkedin')">
+              <input matInput placeholder="First Name" formControlName="firstName">
               <mat-error
-                *ngIf="getCandidateFrom.get('linkedin')?.touched && getCandidateFrom.get('linkedin')?.errors && getCandidateFrom.get('linkedin')?.errors?.required">
-                linkedin URL is required
+                *ngIf="candidateFrom.get('firstName')?.touched && candidateFrom.get('firstName')?.errors && candidateFrom.get('firstName')?.errors?.required">
+                First Name is required
+              </mat-error>
+              <mat-error
+                *ngIf="candidateFrom.get('firstName')?.touched && candidateFrom.get('firstName')?.errors && candidateFrom.get('firstName')?.errors?.minlength">
+                minimum Two character are required
               </mat-error>
             </mat-form-field>
           </div>
           <div class="form-group">
             <label></label>
             <mat-form-field>
-              <div class="place-site" matPrefix>www.facebook.com/</div>
-              <input class="social-input" matInput formControlName="facebook" (blur)="getRequireData('facebook')">
+              <input matInput floatLabel="always" placeholder="Last Name" formControlName="lastName">
               <mat-error
-                *ngIf="getCandidateFrom.get('facebook')?.touched && getCandidateFrom.get('facebook')?.errors && getCandidateFrom.get('facebook')?.errors?.required">
-                Facebook is required
+                *ngIf="candidateFrom.get('lastName')?.touched && candidateFrom.get('lastName')?.errors && candidateFrom.get('lastName')?.errors?.required">
+                Last Name is required
+              </mat-error>
+              <mat-error
+                *ngIf="candidateFrom.get('lastName')?.touched && candidateFrom.get('lastName')?.errors && candidateFrom.get('lastName')?.errors?.minlength">
+                minimum Two character are required
               </mat-error>
             </mat-form-field>
           </div>
         </div>
         <div class="mat-form-wrapper">
-          <div class="form-group  custom-width">
+          <div class="form-group">
+            <label> Email Address</label>
+            <div class="mat-icon-wrapper">
+              <mat-form-field>
+                <input matInput placeholder="Email Address" formControlName="emailAddress">
+                <mat-error
+                  *ngIf="candidateFrom.get('emailAddress')?.touched && candidateFrom.get('emailAddress')?.errors && candidateFrom.get('emailAddress')?.errors?.required">
+                  Email Address is required
+                </mat-error>
+                <mat-error
+                  *ngIf="candidateFrom.get('emailAddress')?.touched && candidateFrom.get('emailAddress')?.errors && candidateFrom.get('emailAddress')?.errors?.email">
+                  Enter valid Email Address
+                </mat-error>
+              </mat-form-field>
+              <ng-container *ngIf="candidateFrom.get('emailAddress')?.touched && !candidateFrom.get('emailAddress')?.valid">
+                <div class="icon-wrap">
+                  <img src="../../assets/images/error.svg"></div>
+              </ng-container>
+              <ng-container *ngIf="candidateFrom.get('emailAddress')?.touched && candidateFrom.get('emailAddress')?.valid">
+                <div class="icon-wrap">
+                  <img src="../../assets/images/correct.svg"></div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="form-group" formGroupName="phoneNumber">
+            <label>Mobile Number</label>
             <mat-form-field>
-              <div class="place-site" matPrefix>www.twitter.com/</div>
-              <input class="social-input" matInput placeholder="" formControlName="twitter"
-                     (blur)="getRequireData('twitter')">
+              <div class="code-wrap" *ngIf="getPhoneNumberFrom.get('countryCode')?.value">+{{getPhoneNumberFrom.get('countryCode')?.value}}</div>
               <mat-error
-                *ngIf="getCandidateFrom.get('twitter')?.touched && getCandidateFrom.get('twitter')?.errors && getCandidateFrom.get('twitter')?.errors?.required">
-                Twitter is required
+                *ngIf="getPhoneNumberFrom.get('countryCode')?.touched && getPhoneNumberFrom.get('countryCode')?.errors && getPhoneNumberFrom.get('countryCode')?.errors?.required">
+                Select Country code.
+              </mat-error>
+              <input matInput formControlName="number" ng2TelInput (countryChange)="onCountryChange($event)"
+                     (intlTelInputObject)="telInputObject($event)"
+                     (hasError)="hasError($event)"/>
+              <mat-error
+                *ngIf="getPhoneNumberFrom.get('number')?.touched && getPhoneNumberFrom.get('number')?.errors && getPhoneNumberFrom.get('number')?.errors?.required">
+                Mobile Number is required
+              </mat-error>
+              <mat-error
+                *ngIf="getPhoneNumberFrom.get('number')?.touched && getPhoneNumberFrom.get('number')?.errors && getPhoneNumberFrom.get('number')?.errors?.incorrect">
+                Enter valid Mobile Number
               </mat-error>
             </mat-form-field>
           </div>
         </div>
+        <div class="mat-form-wrapper border-bottom">
+          <div class="form-group ">
+            <label>South African Identity Number</label>
 
+            <div class="mat-icon-wrapper">
+              <mat-form-field>
+                <input matInput placeholder="South African Identity Number" formControlName="identifierNumber">
+                <mat-error
+                  *ngIf="candidateFrom.get('identifierNumber')?.touched && candidateFrom.get('identifierNumber')?.errors && candidateFrom.get('identifierNumber')?.errors?.required">
+                  South African Identity Number is required
+                </mat-error>
+                <mat-error
+                  *ngIf="candidateFrom.get('identifierNumber')?.touched && utilityService.checkLuhn() && !candidateFrom.get('identifierNumber')?.errors?.required">
+                  Please enter a valid South African Identity Number
+                </mat-error>
+              </mat-form-field>
+              <ng-container
+                *ngIf="candidateFrom.get('identifierNumber')?.touched && !candidateFrom.get('identifierNumber')?.valid">
+                <div class="icon-wrap">
+                  <img src="../../assets/images/error.svg"></div>
+              </ng-container>
+              <ng-container
+                *ngIf="candidateFrom.get('identifierNumber')?.touched && candidateFrom.get('identifierNumber')?.valid">
+                <div class="icon-wrap">
+                  <img src="../../assets/images/correct.svg"></div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div formGroupName="address">
+        <div class="social-link-wrapper">
+          <div class="mat-form-wrapper">
+            <div class="form-group add-space">
+              <label>Physical Address</label>
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Start Typing Your Address"
+                  formControlName="addressLine1"
+                  ngx-google-places-autocomplete
+                  #placesRef="ngx-places"
+                  (onAddressChange)="handleAddressChange($event)"
+                />
+                <mat-error
+                  *ngIf="getAddressFrom.get('addressLine1')?.touched && getAddressFrom.get('addressLine1')?.errors && getAddressFrom.get('addressLine1')?.errors?.required">
+                  Address is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <label class="reset-label" (click)="reset()">Reset</label>
+              <mat-form-field>
+                <input type="text"
+                       placeholder="Country"
+                       matInput
+                       formControlName="country"
+                       [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name">
+                    {{option.name}}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error
+                  *ngIf="getAddressFrom.get('country')?.touched && getAddressFrom.get('country')?.errors && getAddressFrom.get('country')?.errors?.required">
+                  Country is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="mat-form-wrapper">
+          <div class="form-group">
+            <mat-form-field>
+              <input matInput formControlName="addressLine2" placeholder="Address line 2 (Optional)">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="mat-form-wrapper border-bottom">
+          <div class="form-group">
+            <mat-form-field>
+              <input matInput placeholder="City" formControlName="city">
+              <mat-error
+                *ngIf="getAddressFrom.get('city')?.touched && getAddressFrom.get('city')?.errors && getAddressFrom.get('city')?.errors?.required">
+                City is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
 
+            <mat-form-field>
+              <input matInput placeholder="Province" formControlName="province">
+              <mat-error
+                *ngIf="getAddressFrom.get('province')?.touched && getAddressFrom.get('province')?.errors && getAddressFrom.get('province')?.errors?.required">
+                Province is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+
+            <mat-form-field>
+              <input matInput placeholder="Postal Code" formControlName="postalCode">
+              <mat-error
+                *ngIf="getAddressFrom.get('postalCode')?.touched && getAddressFrom.get('postalCode')?.errors && getAddressFrom.get('postalCode')?.errors?.required">
+                Postal Code is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div formGroupName="socialProfile">
+        <div class="social-link-wrapper">
+          <div class="mat-form-wrapper">
+            <div class="form-group">
+              <label>
+                Social Media Profiles
+              </label>
+              <mat-form-field>
+                <div class="place-site" matPrefix>www.linkedin.com/in/</div>
+                <input class="social-input" matInput formControlName="linkedin" (blur)="getRequireData('linkedin')">
+                <mat-error
+                  *ngIf="getSocialFrom.get('linkedin')?.touched && getSocialFrom.get('linkedin')?.errors && getSocialFrom.get('linkedin')?.errors?.required">
+                  linkedin URL is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <label></label>
+              <mat-form-field>
+                <div class="place-site" matPrefix>www.facebook.com/</div>
+                <input class="social-input" matInput formControlName="facebook" (blur)="getRequireData('facebook')">
+                <mat-error
+                  *ngIf="getSocialFrom.get('facebook')?.touched && getSocialFrom.get('facebook')?.errors && getSocialFrom.get('facebook')?.errors?.required">
+                  Facebook is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="mat-form-wrapper">
+            <div class="form-group  custom-width">
+              <mat-form-field>
+                <div class="place-site" matPrefix>www.twitter.com/</div>
+                <input class="social-input" matInput placeholder="" formControlName="twitter"
+                       (blur)="getRequireData('twitter')">
+                <mat-error
+                  *ngIf="getSocialFrom.get('twitter')?.touched && getSocialFrom.get('twitter')?.errors && getSocialFrom.get('twitter')?.errors?.required">
+                  Twitter is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button class="outline-btn-cancel" color="primary" mat-dialog-close>Cancel</button>
-    <button mat-raised-button class="btn-save" color="primary" [mat-dialog-close]="getCandidateFrom.value" cdkFocusInitial
-            [disabled]="!getCandidateFrom.valid"
+    <button mat-raised-button class="btn-save" color="primary" [mat-dialog-close]="candidateFrom.value"
+            cdkFocusInitial
+            [disabled]="!candidateFrom.valid"
             (click)="save()">Save
     </button>
   </mat-dialog-actions>
-
 </div>

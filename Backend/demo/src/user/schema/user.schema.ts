@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { Address } from './address.schema';
 import { SocialProfileSchema } from './social-profile.schema';
+import { PhoneNumberSchema } from './phone-number.schema';
 
 export type UserDocument = User & Document;
 
@@ -21,7 +22,7 @@ export class User {
   emailAddress: string;
 
   @Prop()
-  phoneNumber: string;
+  phoneNumber: PhoneNumberSchema;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Address' })
   address: Address;

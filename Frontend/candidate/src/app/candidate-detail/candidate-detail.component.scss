@@ -184,5 +184,10 @@
     transform: translateY(-1.28125em) scale(0) perspective(100px) translateZ(0.001px);
     width: 133.3333333333%;
   }
+  .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-form-field-autofill-control:-webkit-autofill+.mat-form-field-label-wrapper .mat-form-field-label {
+    transform: translateY(-1.28125em) scale(0) perspective(100px) translateZ(0.001px);
+    width: 133.3333333333%;
+   }
 }
+
 
