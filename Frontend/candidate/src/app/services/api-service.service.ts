@@ -28,4 +28,12 @@ export class CandidateService {
     return this.http.get(`${this.baseUrl}/users`)
 
   }
+
+  getCountry() {
+    return this.http.get('https://ipapi.co/json/')
+  }
+
+  getCountryState() {
+    return this.http.get('assets/country-states.json')
+  }
 }

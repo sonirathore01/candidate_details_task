@@ -38,7 +38,7 @@
             <label> Email Address</label>
             <div class="mat-icon-wrapper">
               <mat-form-field>
-                <input matInput placeholder="Email Address" formControlName="emailAddress">
+                <input class="input-icon" matInput placeholder="Email Address" formControlName="emailAddress">
                 <mat-error
                   *ngIf="candidateFrom.get('emailAddress')?.touched && candidateFrom.get('emailAddress')?.errors && candidateFrom.get('emailAddress')?.errors?.required">
                   Email Address is required
@@ -86,7 +86,7 @@
 
             <div class="mat-icon-wrapper">
               <mat-form-field>
-                <input matInput placeholder="South African Identity Number" formControlName="identifierNumber">
+                <input class="input-icon" matInput placeholder="South African Identity Number" formControlName="identifierNumber">
                 <mat-error
                   *ngIf="candidateFrom.get('identifierNumber')?.touched && candidateFrom.get('identifierNumber')?.errors && candidateFrom.get('identifierNumber')?.errors?.required">
                   South African Identity Number is required
@@ -137,10 +137,11 @@
                        placeholder="Country"
                        matInput
                        formControlName="country"
+                       (change)="getAddressFrom.get('province')?.reset()"
                        [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name">
-                    {{option.name}}
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option[1]">
+                    {{option[1]}}
                   </mat-option>
                 </mat-autocomplete>
                 <mat-error
@@ -171,7 +172,16 @@
           <div class="form-group">
 
             <mat-form-field>
-              <input matInput placeholder="Province" formControlName="province">
+              <input type="text"
+                     placeholder="Province"
+                     matInput
+                     formControlName="province"
+                     [matAutocomplete]="province">
+              <mat-autocomplete #province="matAutocomplete">
+                <mat-option *ngFor="let option of getStateList()" [value]="option.name">
+                  {{option.name}}
+                </mat-option>
+              </mat-autocomplete>
               <mat-error
                 *ngIf="getAddressFrom.get('province')?.touched && getAddressFrom.get('province')?.errors && getAddressFrom.get('province')?.errors?.required">
                 Province is required

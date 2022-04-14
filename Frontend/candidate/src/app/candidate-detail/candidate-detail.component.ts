@@ -1,7 +1,6 @@
 import {Component, Inject, OnInit, Optional, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {map, startWith} from 'rxjs/operators';
-import {Countries} from "../shared/model/countries.model";
 import {UtilityService} from "../shared/services/utility.service";
 import {GooglePlaceDirective} from "ngx-google-places-autocomplete";
 import {Address} from "ngx-google-places-autocomplete/objects/address";
@@ -20,7 +19,7 @@ export class CandidateDetailComponent implements OnInit {
   type: string = 'Add';
   modalTitle: string = 'Candidate Details';
   candidateFrom: FormGroup = new FormGroup({});
-  filteredOptions;
+  filteredOptions: any;
   candidateDetails: CandidateDetailResponseModel = {
     emailAddress: "",
     firstName: "",
@@ -28,6 +27,7 @@ export class CandidateDetailComponent implements OnInit {
     lastName: "",
     phoneNumber: 0
   };
+  countryStateList: any;
 
   @ViewChild('placesRef')
   placesRef!: GooglePlaceDirective;
@@ -38,12 +38,15 @@ export class CandidateDetailComponent implements OnInit {
               @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder) {
     this.modalTitle = this.data?.modalTitle;
     this.initCandidateFrom();
-    this.filteredOptions = this.getAddressFrom?.get('country')?.valueChanges.pipe(
-      startWith(<string>''),
-      map(value => {
-        return this.utilityService.countries.filter((option: Countries) => option.name.toLowerCase().includes(value?.toLowerCase()));
-      }),
-    );
+    this.apiService.getCountryState().subscribe((res)=> {
+      this.countryStateList = res;
+      this.filteredOptions = this.getAddressFrom?.get('country')?.valueChanges.pipe(
+        startWith(<string>''),
+        map(value => {
+          return Object.entries(this.countryStateList.country).filter((c: any) => c[1].toLowerCase().includes(value?.toLowerCase()));
+        }),
+      );
+    });
   }
 
   ngOnInit(): void {
@@ -86,8 +89,9 @@ export class CandidateDetailComponent implements OnInit {
   handleAddressChange(address: Address) {
     this.getAddressFrom.get('postalCode')?.setValue(address.address_components.find((c) => c.types.includes('postal_code'))?.long_name);
     this.getAddressFrom.get('country')?.setValue(address.address_components.find((c) => c.types.includes('country'))?.long_name);
-    this.getAddressFrom.get('city')?.setValue(address.address_components.find((c) => c.types.includes('administrative_area_level_1'))?.long_name);
-    this.getAddressFrom.get('addressLine1')?.setValue(address.formatted_address);
+    this.getAddressFrom.get('city')?.setValue(address.address_components.find((c) => c.types.includes('locality'))?.long_name);
+    this.getAddressFrom.get('province')?.setValue(address.address_components.find((c) => c.types.includes('administrative_area_level_1'))?.long_name);
+    this.getAddressFrom.get('addressLine1')?.setValue((address.address_components.find((c) => c.types.includes('street_number'))?.long_name + ' ' ?? '') + (address.address_components.find((c) => c.types.includes('route'))?.long_name ?? ''));
   }
 
   reset() {
@@ -105,7 +109,9 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   telInputObject(obj: any) {
-    obj.setCountry('za');
+    this.apiService.getCountry().subscribe((res: any)=> {
+      obj.setCountry(res.country);
+    });
   }
 
   private initCandidateFrom(): void {
@@ -145,5 +151,14 @@ export class CandidateDetailComponent implements OnInit {
 
   public get getPhoneNumberFrom() {
     return this.candidateFrom.controls['phoneNumber'];
+  }
+
+  getStateList() {
+    if(this.countryStateList && this.getAddressFrom.get('country')?.value) {
+      let countryCode = Object.entries(this.countryStateList.country).find((c: any)=>c[1] === this.getAddressFrom.get('country')?.value);
+      return countryCode ? this.countryStateList.states[countryCode[0]] : [];
+    } else {
+      return [];
+    }
   }
 }
