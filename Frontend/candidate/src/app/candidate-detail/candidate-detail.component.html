@@ -121,6 +121,7 @@
                   placeholder="Start Typing Your Address"
                   formControlName="addressLine1"
                   ngx-google-places-autocomplete
+                  [options]="placeOptions"
                   #placesRef="ngx-places"
                   (onAddressChange)="handleAddressChange($event)"
                 />
@@ -137,10 +138,12 @@
                        placeholder="Country"
                        matInput
                        formControlName="country"
+                       (click)="filterCountryOption()"
+                       (input)="filterCountryOption('filter')"
                        (change)="getAddressFrom.get('province')?.reset()"
                        [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option[1]">
+                  <mat-option *ngFor="let option of filteredOptions " [value]="option[1]">
                     {{option[1]}}
                   </mat-option>
                 </mat-autocomplete>
@@ -176,9 +179,11 @@
                      placeholder="Province"
                      matInput
                      formControlName="province"
+                     (click)="filterProvinceOption()"
+                     (input)="filterProvinceOption('filter')"
                      [matAutocomplete]="province">
               <mat-autocomplete #province="matAutocomplete">
-                <mat-option *ngFor="let option of getStateList()" [value]="option.name">
+                <mat-option *ngFor="let option of filteredState" [value]="option.name">
                   {{option.name}}
                 </mat-option>
               </mat-autocomplete>

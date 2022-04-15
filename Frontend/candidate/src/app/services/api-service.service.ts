@@ -10,8 +10,12 @@ import {Observable} from "rxjs";
 export class CandidateService {
 
   baseUrl: string = environment.baseUrl;
+  country = '';
 
   constructor(private http: HttpClient) {
+    this.getCountry().subscribe((res: any)=> {
+      this.country = res.country;
+    })
   }
 
   saveCandidate(candidateDetails: CandidateDetailRequestModel): Observable<any> {
