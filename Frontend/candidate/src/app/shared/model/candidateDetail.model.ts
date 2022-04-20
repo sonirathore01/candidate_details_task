@@ -1,15 +1,12 @@
-export interface CandidateDetailRequestModel {
-  user?: UserModel;
-  address?: AddressModel;
-  socialMediaProfile?: SocialMediaProfileModel;
-}
-
 export interface UserModel {
   identifierNumber: number;
   firstName: string;
   lastName: string;
   emailAddress: string;
   phoneNumber: number;
+  address?: AddressModel;
+  socialMediaProfile?: SocialMediaProfileModel;
+  _id?: string;
 }
 
 export interface AddressModel {
@@ -27,11 +24,4 @@ export interface SocialMediaProfileModel {
   linkedin: string;
   facebook: string;
   twitter: string;
-}
-
-export interface CandidateDetailResponseModel extends UserModel {
-  address?: AddressModel;
-  socialProfile?: SocialMediaProfileModel;
-  _id?: string;
-  __v?: number;
 }

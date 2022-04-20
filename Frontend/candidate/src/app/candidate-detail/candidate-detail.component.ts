@@ -5,7 +5,9 @@ import {GooglePlaceDirective} from "ngx-google-places-autocomplete";
 import {Address} from "ngx-google-places-autocomplete/objects/address";
 import {CandidateService} from "../services/api-service.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {CandidateDetailResponseModel} from "../shared/model/candidateDetail.model";
+import {UserModel} from "../shared/model/candidateDetail.model";
+import {Store} from "@ngrx/store";
+import * as candidateActions from '../app-state/candidate.actions'
 declare var google: any;
 
 
@@ -20,7 +22,7 @@ export class CandidateDetailComponent implements OnInit {
   modalTitle: string = 'Candidate Details';
   candidateFrom: FormGroup = new FormGroup({});
   filteredOptions: any;
-  candidateDetails: CandidateDetailResponseModel = {
+  candidateDetails: UserModel = {
     emailAddress: "",
     firstName: "",
     identifierNumber: 0,
@@ -47,7 +49,8 @@ export class CandidateDetailComponent implements OnInit {
 
   constructor(public utilityService: UtilityService, public apiService: CandidateService,
               public dialogRef: MatDialogRef<CandidateDetailComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder) {
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder,
+              private readonly store: Store) {
     this.modalTitle = this.data?.modalTitle;
     this.initCandidateFrom();
     this.apiService.getCountryState().subscribe((res)=> {
@@ -85,15 +88,11 @@ export class CandidateDetailComponent implements OnInit {
 
   save() {
     if (this.type === 'Add') {
-      this.apiService.saveCandidate(this.candidateFrom.value)
-        .subscribe((response) => {
-          this.dialogRef.close();
-        })
+      this.store.dispatch(candidateActions.addCandidate({candidate: this.candidateFrom.value}));
+      this.dialogRef.close();
     } else if (this.type === 'Update') {
-      this.apiService.updateCandidate(this.candidateFrom.value, this.candidateFrom.value._id)
-        .subscribe((response) => {
-          this.dialogRef.close();
-        })
+      this.store.dispatch(candidateActions.updateCandidate({candidate: this.candidateFrom.value, id: this.candidateFrom.value._id}));
+      this.dialogRef.close();
     }
 
 

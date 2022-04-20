@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment.prod";
 import {HttpClient} from "@angular/common/http";
-import {CandidateDetailRequestModel} from "../shared/model/candidateDetail.model";
+import {UserModel} from "../shared/model/candidateDetail.model";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -18,12 +18,12 @@ export class CandidateService {
     })
   }
 
-  saveCandidate(candidateDetails: CandidateDetailRequestModel): Observable<any> {
+  saveCandidate(candidateDetails: UserModel): Observable<any> {
     return this.http.post(`${this.baseUrl}/users`, candidateDetails)
 
   }
 
-  updateCandidate(candidateDetails: CandidateDetailRequestModel, id?: string): Observable<any> {
+  updateCandidate(candidateDetails: UserModel, id?: string): Observable<any> {
     return this.http.patch(`${this.baseUrl}/users/${id}`, candidateDetails)
 
   }

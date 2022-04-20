@@ -73,11 +73,11 @@ export class UserService {
 
       //Update User Model
       const userModel = await this.userModel
-        .findOneAndUpdate(
-          { _id: userId },
-          UserMapper.toDomain(updateUserDto, address),
-        )
-        .populate('address');
+          .findOneAndUpdate(
+              { _id: userId },
+              UserMapper.toDomain(updateUserDto, address),
+              {returnOriginal:false}
+          );
 
       console.log('Successfully updated candidate information');
 

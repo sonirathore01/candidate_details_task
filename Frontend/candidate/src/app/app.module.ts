@@ -17,6 +17,10 @@ import {Ng2TelInputModule} from "ng2-tel-input";
 import {MatTableModule} from "@angular/material/table";
 import {HttpClientModule} from "@angular/common/http";
 import {MatIconModule} from "@angular/material/icon";
+import {StoreModule} from "@ngrx/store";
+import {metaReducers, reducers} from "./app-state";
+import {EffectsModule} from "@ngrx/effects";
+import {CandidateEffects} from "./app-state/candidate.effects";
 
 @NgModule({
   declarations: [
@@ -39,7 +43,11 @@ import {MatIconModule} from "@angular/material/icon";
     MatIconModule,
     GooglePlaceModule,
     HttpClientModule,
-    Ng2TelInputModule
+    Ng2TelInputModule,
+    StoreModule.forRoot(reducers, {
+      metaReducers
+    }),
+    EffectsModule.forRoot([CandidateEffects])
   ],
   providers: [],
   bootstrap: [AppComponent]
