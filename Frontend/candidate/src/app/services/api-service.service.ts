@@ -41,7 +41,7 @@ export class CandidateService {
     return this.http.get('assets/country-states.json')
   }
 
-  deleteCandidate(id?: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/users/${id}`)
+  deleteCandidate(ids?: string[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/users/delete`, {ids: ids})
   }
 }

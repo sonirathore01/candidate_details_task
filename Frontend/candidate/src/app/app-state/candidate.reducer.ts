@@ -8,13 +8,14 @@ export interface State {
   candidates: UserModel[];
   currentCandidate?: UserModel;
   total?: number;
-  deleteCandidateId?: string;
+  deleteCandidateId: string[];
 }
 
 export const initialState: State = {
   candidates: storage.getItem('candidates').candidates,
   currentCandidate: {} as UserModel,
-  total: 0
+  total: 0,
+  deleteCandidateId: []
 };
 
 
@@ -22,13 +23,23 @@ const candidateReducer = createReducer(
   initialState,
 
   on(candidateActions.getCandidates, (state) => ({...state})),
-  on(candidateActions.getCandidatesSuccess, (state, result) => ({candidates: result.response.items, total: result.response.total})),
+  on(candidateActions.getCandidatesSuccess, (state, result) =>{
+    return  {...state, candidates: result.response.items, total: result.response.total}
+  }),
+  on(candidateActions.getCandidatesFailure, (state, result) =>{
+    if (result['error']['text'] == "Candidates were not found."){
+      return  {...state, candidates: [], total: 0};
+    } else {
+      return {...state};
+    }
+  }),
 
   on(candidateActions.addCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate})),
   on(candidateActions.addCandidateSuccess, (state, result: UserModel) => {
     const candidates = undefined !== state.candidates ? _.cloneDeep(state.candidates) : [];
     candidates.push(result);
     return {
+      ...state,
       candidates: candidates,
       total: state.total ? state.total + 1 : 1
     };
@@ -44,20 +55,22 @@ const candidateReducer = createReducer(
       return can;
     });
     return {
+      ...state,
       candidates: candidates,
       total: state.total
     };
   }),
 
-  on(candidateActions.deleteCandidate, (state, {candidateId}) => ({...state, deleteCandidateId: candidateId})),
+  on(candidateActions.deleteCandidate, (state, {candidateIds}) => ({...state, deleteCandidateId: candidateIds})),
   on(candidateActions.deleteCandidateSuccess, (state, result) => {
     let candidates = undefined !== state.candidates ? _.cloneDeep(state.candidates) : [];
     if (result.message == 'Data successfully deleted') {
-      candidates = candidates.filter(candidate => candidate._id !== state.deleteCandidateId);
+      candidates = candidates.filter(candidate => !state.deleteCandidateId.includes(candidate._id ? candidate._id : ''));
     }
     return {
+      ...state,
       candidates,
-      total: state.total ? state.total -1 : 0
+      total: state.total ? state.total - state.deleteCandidateId.length : 0
     };
   }),
 

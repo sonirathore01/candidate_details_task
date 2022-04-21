@@ -63,7 +63,7 @@ export const updateCandidateFailure = createAction(
 
 export const deleteCandidate = createAction(
   DELETE_CANDIDATE,
-  props<{candidateId:string}>()
+  props<{candidateIds:string[]}>()
 );
 
 export const deleteCandidateSuccess = createAction(

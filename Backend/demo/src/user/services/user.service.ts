@@ -178,12 +178,15 @@ export class UserService {
       return e.message;
     }
   }
-  async delete(id:any):Promise<any>  {
+
+  async deleteMany(ids:any):Promise<any>  {
     try {
-      const userData = await this.userModel.findById(id)
-      const addressId = userData.address.toString();
-      await userData.delete()
-      const address = await this.addressModel.findByIdAndDelete(addressId)
+      await ids.map(async (id)=>{
+        const userData = await this.userModel.findById(id);
+        const addressId = userData.address.toString();
+        await userData.delete();
+        const address = await this.addressModel.findByIdAndDelete(addressId)
+      });
       return {message :  "Data successfully deleted" }
     } catch (e) {
       console.log(

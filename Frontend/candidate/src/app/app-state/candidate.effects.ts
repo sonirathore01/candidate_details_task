@@ -50,7 +50,7 @@ export class CandidateEffects {
   deleteCandidate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(candidateActions.deleteCandidate),
-      exhaustMap(action => this.apiService.deleteCandidate(action.candidateId).pipe(
+      exhaustMap(action => this.apiService.deleteCandidate(action.candidateIds).pipe(
         map(response => candidateActions.deleteCandidateSuccess(response)),
         catchError((error: any) => of(candidateActions.deleteCandidateFailure(error))))
       )

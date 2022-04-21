@@ -38,9 +38,9 @@ export class UserController {
     return this.userService.list(query);
   }
 
-  @Delete('/:userId')
-  @HttpCode(200)
-  public async delete(@Param('userId') userId : any) {
-    return this.userService.delete(userId);
+  @Post('/delete')
+  @HttpCode(201)
+  public async deleteMany(@Body() data: string[]) {
+    return await this.userService.deleteMany(data["ids"]);
   }
 }

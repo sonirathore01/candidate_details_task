@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.selection.select(...this.details.data);
   }
 
-  checkboxLabel(row?: UserModel): string {;
+  checkboxLabel(row?: UserModel): string {
     if (!row) {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
@@ -103,12 +103,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   deleteCandidate(id: string) {
-    this.store.dispatch(candidateActions.deleteCandidate({candidateId: id}));
+    this.store.dispatch(candidateActions.deleteCandidate({candidateIds: [id]}));
   }
 
   deleteSelected() {
-    this.selection.selected.forEach((candidate: UserModel)=> {
-      this.deleteCandidate(candidate._id ? candidate._id : '');
-    });
+    this.store.dispatch(candidateActions.deleteCandidate({candidateIds: this.selection.selected.map((c)=>c._id ? c._id : '')}));
+    this.selection = new SelectionModel<UserModel>(true, []);
   }
 }
