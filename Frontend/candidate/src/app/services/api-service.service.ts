@@ -28,8 +28,8 @@ export class CandidateService {
 
   }
 
-  getAllCandidates(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/users`)
+  getAllCandidates(action: {filterValue: string, selectedPage: number, pageSize: number}): Observable<any> {
+    return this.http.get(`${this.baseUrl}/users?search=${action.filterValue}&page=${action.selectedPage+1}&limit=${action.pageSize}`)
 
   }
 
@@ -39,5 +39,9 @@ export class CandidateService {
 
   getCountryState() {
     return this.http.get('assets/country-states.json')
+  }
+
+  deleteCandidate(id?: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/users/${id}`)
   }
 }

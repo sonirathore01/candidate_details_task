@@ -1,15 +1,17 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   HttpCode,
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { query } from 'express';
 
 @Controller('users')
 export class UserController {
@@ -32,7 +34,13 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  public async list() {
-    return this.userService.list();
+  public async list(@Query() query:any) {
+    return this.userService.list(query);
+  }
+
+  @Delete('/:userId')
+  @HttpCode(200)
+  public async delete(@Param('userId') userId : any) {
+    return this.userService.delete(userId);
   }
 }

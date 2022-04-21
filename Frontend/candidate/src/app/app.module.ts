@@ -21,6 +21,9 @@ import {StoreModule} from "@ngrx/store";
 import {metaReducers, reducers} from "./app-state";
 import {EffectsModule} from "@ngrx/effects";
 import {CandidateEffects} from "./app-state/candidate.effects";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -41,6 +44,9 @@ import {CandidateEffects} from "./app-state/candidate.effects";
     MatSelectModule,
     MatTableModule,
     MatIconModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatMenuModule,
     GooglePlaceModule,
     HttpClientModule,
     Ng2TelInputModule,

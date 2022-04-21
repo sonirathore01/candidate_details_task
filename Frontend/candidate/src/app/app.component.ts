@@ -1,13 +1,16 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {CandidateDetailComponent} from "./candidate-detail/candidate-detail.component";
-import {CandidateService} from "./services/api-service.service";
 import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import {distinctUntilChanged, takeUntil} from "rxjs/operators";
 import {UserModel} from "./shared/model/candidateDetail.model";
 import {Store} from "@ngrx/store";
 import * as fromRoot from './app-state/index';
 import * as candidateActions from './app-state/candidate.actions'
+import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
+import {SelectionModel} from "@angular/cdk/collections";
+import {CandidateService} from "./services/api-service.service";
 
 @Component({
   selector: 'app-root',
@@ -16,23 +19,38 @@ import * as candidateActions from './app-state/candidate.actions'
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'candidate';
-  details: UserModel[] = [];
+  details: MatTableDataSource<UserModel> = new MatTableDataSource([] as UserModel[]);
 
   destroy$: Subject<boolean> = new Subject<boolean>();
-  displayedColumns: string[] = ['firstName', 'lastName', 'phoneNumber','action'];
+  selection = new SelectionModel<UserModel>(true, []);
+  displayedColumns: string[] = ['select', 'firstName', 'identifierNumber', 'address', 'emailAddress', 'phoneNumber', 'daysActive', 'action'];
+  countryList: any;
+  filterValue = '';
+  total: number = 0;
+
+  @ViewChild(MatPaginator) paginator: any;
 
 
   constructor(public dialog: MatDialog,
+              private apiService: CandidateService,
               private readonly store: Store) {
+    this.apiService.getCountryState().subscribe((res: any)=> {
+      this.countryList = res['country'];
+    });
   }
 
   ngOnInit(): void {
-    this.store.dispatch(candidateActions.getCandidates());
+    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: 0, pageSize: 10}));
     this.store.select(fromRoot.getCandidates).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((data) => {
-      this.details =  data.candidates ? [...data.candidates] : []
+      distinctUntilChanged()
+    ).subscribe((data: any) => {
+      this.total = data.total;
+      this.details =  new MatTableDataSource(data.candidates ? [...data.candidates] : []);
     });
+  }
+
+  ngAfterViewInit() {
+    this.details.paginator = this.paginator;
   }
 
   public openCandidateDialog(modalTitle: string, type: 'Update' | 'Add', data?: any ): void {
@@ -42,8 +60,55 @@ export class AppComponent implements OnInit, OnDestroy {
     })
   }
 
+  applyFilter(event: Event) {
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.paginator.pageIndex = 0;
+    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: this.paginator.pageIndex, pageSize: this.paginator.pageSize}));
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.details.data.length;
+    return numSelected === numRows;
+  }
+
+  masterToggle() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.details.data);
+  }
+
+  checkboxLabel(row?: UserModel): string {;
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
+  }
+
+  getCountryCode(country: string) {
+    let selected = country ? Object.entries(this.countryList).find((c: any)=> c[1].toLowerCase() == country.toLowerCase()) : null;
+    return selected ? selected[0].toLowerCase() : '';
+  }
+
+  onPageChange(event: any) {
+    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: this.paginator.pageIndex, pageSize: this.paginator.pageSize}));
+  }
+
+  deleteCandidate(id: string) {
+    this.store.dispatch(candidateActions.deleteCandidate({candidateId: id}));
+  }
+
+  deleteSelected() {
+    this.selection.selected.forEach((candidate: UserModel)=> {
+      this.deleteCandidate(candidate._id ? candidate._id : '');
+    });
   }
 }

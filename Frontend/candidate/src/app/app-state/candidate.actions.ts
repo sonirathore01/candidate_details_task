@@ -12,8 +12,13 @@ export const UPDATE_CANDIDATE = '[Candidate] Update Candidate';
 export const UPDATE_CANDIDATE_SUCCESS = '[Candidate] Update Candidate Success';
 export const UPDATE_CANDIDATE_FAILURE = '[Candidate] Update Candidate Failure';
 
+export const DELETE_CANDIDATE = '[Candidate] Delete Candidate';
+export const DELETE_CANDIDATE_SUCCESS = '[Candidate] Delete Candidate Success';
+export const DELETE_CANDIDATE_FAILURE = '[Candidate] Delete Candidate Failure';
+
 export const getCandidates = createAction(
-  GET_CANDIDATES
+  GET_CANDIDATES,
+  props<{filterValue: string, selectedPage: number, pageSize: number}>()
 );
 
 export const getCandidatesSuccess = createAction(
@@ -53,5 +58,20 @@ export const updateCandidateSuccess = createAction(
 
 export const updateCandidateFailure = createAction(
   UPDATE_CANDIDATE_FAILURE,
+  props<any>()
+);
+
+export const deleteCandidate = createAction(
+  DELETE_CANDIDATE,
+  props<{candidateId:string}>()
+);
+
+export const deleteCandidateSuccess = createAction(
+  DELETE_CANDIDATE_SUCCESS,
+  props<any>()
+);
+
+export const deleteCandidateFailure = createAction(
+  DELETE_CANDIDATE_FAILURE,
   props<any>()
 );
