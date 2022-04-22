@@ -1,12 +1,12 @@
-import {Component, Inject, OnInit, Optional, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {UtilityService} from "../shared/services/utility.service";
-import {GooglePlaceDirective} from "ngx-google-places-autocomplete";
-import {Address} from "ngx-google-places-autocomplete/objects/address";
-import {CandidateService} from "../services/api-service.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {UserModel} from "../shared/model/candidateDetail.model";
-import {Store} from "@ngrx/store";
+import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UtilityService } from "../shared/services/utility.service";
+import { GooglePlaceDirective } from "ngx-google-places-autocomplete";
+import { Address } from "ngx-google-places-autocomplete/objects/address";
+import { CandidateService } from "../services/api-service.service";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { UserModel } from "../shared/model/candidateDetail.model";
+import { Store } from "@ngrx/store";
 import * as candidateActions from '../app-state/candidate.actions'
 declare var google: any;
 
@@ -29,8 +29,10 @@ export class CandidateDetailComponent implements OnInit {
     lastName: "",
     phoneNumber: 0
   };
+  contryCode : any;
   countryStateList: any;
   filteredState: any;
+  
   placeOptions = {
     bounds: new google.maps.LatLngBounds(
       new google.maps.LatLng(85, -180),
@@ -42,15 +44,17 @@ export class CandidateDetailComponent implements OnInit {
     types: [],
     origin: new google.maps.LatLng()
   };
+  telInstance: any;
 
   @ViewChild('placesRef')
   placesRef!: GooglePlaceDirective;
+  @ViewChild('telInput') telInput: any;
 
 
   constructor(public utilityService: UtilityService, public apiService: CandidateService,
-              public dialogRef: MatDialogRef<CandidateDetailComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder,
-              private readonly store: Store) {
+    public dialogRef: MatDialogRef<CandidateDetailComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder,
+    private readonly store: Store) {
     this.modalTitle = this.data?.modalTitle;
     this.initCandidateFrom();
     this.apiService.getCountryState().subscribe((res)=> {
@@ -66,21 +70,21 @@ export class CandidateDetailComponent implements OnInit {
 
   }
 
-  filterCountryOption(flag='initial') {
-    if (flag=='initial') {
+  filterCountryOption(flag = 'initial') {
+    if (flag == 'initial') {
       this.filteredOptions = Object.entries(this.countryStateList.country);
     } else {
       this.filteredOptions = Object.entries(this.countryStateList.country).filter((c: any) => c[1].toLowerCase().includes(this.getAddressFrom?.get('country')?.value?.toLowerCase()));
     }
   }
 
-  filterProvinceOption(flag='initial') {
-    if(this.countryStateList && this.getAddressFrom.get('country')?.value && flag == 'filter') {
-      let countryCode = Object.entries(this.countryStateList.country).find((c: any)=>c[1] === this.getAddressFrom.get('country')?.value);
+  filterProvinceOption(flag = 'initial') {
+    if (this.countryStateList && this.getAddressFrom.get('country')?.value && flag == 'filter') {
+      let countryCode = Object.entries(this.countryStateList.country).find((c: any) => c[1] === this.getAddressFrom.get('country')?.value);
       this.filteredState = countryCode ? this.countryStateList.states[countryCode[0]].filter((state: any) => state.name.toLowerCase().includes(this.getAddressFrom.get('province')?.value.toLowerCase() ?? '')) : [];
-    } else if(this.countryStateList && this.getAddressFrom.get('country')?.value && flag == 'initial') {
-      let countryCode = Object.entries(this.countryStateList.country).find((c: any)=>c[1] === this.getAddressFrom.get('country')?.value);
-      this.filteredState = countryCode ? this.countryStateList.states[countryCode[0]]: [];
+    } else if (this.countryStateList && this.getAddressFrom.get('country')?.value && flag == 'initial') {
+      let countryCode = Object.entries(this.countryStateList.country).find((c: any) => c[1] === this.getAddressFrom.get('country')?.value);
+      this.filteredState = countryCode ? this.countryStateList.states[countryCode[0]] : [];
     } else {
       this.filteredState = [];
     }
@@ -88,13 +92,12 @@ export class CandidateDetailComponent implements OnInit {
 
   save() {
     if (this.type === 'Add') {
-      this.store.dispatch(candidateActions.addCandidate({candidate: this.candidateFrom.value}));
+      this.store.dispatch(candidateActions.addCandidate({ candidate: this.candidateFrom.value }));
       this.dialogRef.close();
     } else if (this.type === 'Update') {
-      this.store.dispatch(candidateActions.updateCandidate({candidate: this.candidateFrom.value, id: this.candidateFrom.value._id}));
+      this.store.dispatch(candidateActions.updateCandidate({ candidate: this.candidateFrom.value, id: this.candidateFrom.value._id }));
       this.dialogRef.close();
     }
-
 
   }
 
@@ -124,24 +127,29 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   onCountryChange(event: any) {
+    this.contryCode =  event.dialCode
     this.getPhoneNumberFrom.get('countryCode')?.setValue(event.dialCode);
   }
 
   hasError(event: Boolean) {
     if (!event) {
-      this.getPhoneNumberFrom.get('number')?.setErrors({'incorrect': true});
+      this.getPhoneNumberFrom.get('number')?.setErrors({ 'incorrect': true });
     }
   }
 
   telInputObject(obj: any) {
     obj.setCountry(this.apiService.country);
+    this.telInstance = obj;
   }
+  
+
 
   private initCandidateFrom(): void {
+    
     this.candidateFrom = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      emailAddress: ['', [Validators.required, Validators.email]],
+      emailAddress: ['', [Validators.required, Validators.email,]],
       phoneNumber: this.fb.group({
         countryCode: ['', [Validators.required]],
         number: ['', [Validators.required]]
@@ -176,4 +184,38 @@ export class CandidateDetailComponent implements OnInit {
     return this.candidateFrom.controls['phoneNumber'];
   }
 
+
+  writeValue(value: any) {
+    if (value) {
+      this.telInput.nativeElement.value = value;
+      if (this.telInstance) {
+        this.telInstance.setNumber(value);
+      }
+    }
+  }
+
+  propagateChange = (_: any) => {};
+
+  registerOnChange(fn: any) {
+    this.propagateChange = fn;
+  }
+
+  onTouched = () => {};
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  onChange() {
+    this.onTouched();
+    const w: any = window;
+    if (typeof w.intlTelInputUtils !== 'undefined') {
+      const currentText = this.telInstance.getNumber(w.intlTelInputUtils.numberFormat.E164);
+      if (typeof currentText === 'string') {
+        this.telInstance.setNumber(currentText);
+        this.getPhoneNumberFrom.get('number')?.setValue(this.telInput.nativeElement.value);
+        this.propagateChange(this.telInput.nativeElement.value);
+      }
+    }
+  }
 }

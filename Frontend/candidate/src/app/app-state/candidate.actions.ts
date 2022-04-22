@@ -18,7 +18,7 @@ export const DELETE_CANDIDATE_FAILURE = '[Candidate] Delete Candidate Failure';
 
 export const getCandidates = createAction(
   GET_CANDIDATES,
-  props<{filterValue: string, selectedPage: number, pageSize: number}>()
+  props<{filterValue: string, selectedPage: number, pageSize: number, sortColumn?: string, sortType?: string}>()
 );
 
 export const getCandidatesSuccess = createAction(

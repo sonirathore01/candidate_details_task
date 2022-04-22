@@ -16,7 +16,7 @@ export class CandidateEffects {
     this.actions$.pipe(
       ofType(candidateActions.getCandidates),
       exhaustMap(action =>
-        this.apiService.getAllCandidates({filterValue: action.filterValue,selectedPage: action.selectedPage, pageSize: action.pageSize}).pipe(
+        this.apiService.getAllCandidates({filterValue: action.filterValue,selectedPage: action.selectedPage, pageSize: action.pageSize, sortColumn: action.sortColumn, sortType: action.sortType}).pipe(
           map(response => {
             return candidateActions.getCandidatesSuccess({response})
           }),

@@ -1,5 +1,5 @@
 
-.candidate-wrapper {
+  .candidate-wrapper {
   h2 {
     border-bottom: solid 1px #ecf0f3;
     font-size: 18px;
@@ -107,21 +107,20 @@
                   }
                   .iti__flag-container {
                     width: 90px;
-                    padding-right: 8px;
                     border-right: solid 1px #d8d8d8;
                     .iti__selected-flag {
                       position: relative;
                       .iti__arrow {
                         position: absolute;
-                        right: 0;
+                        right: 8px;
                       }
                     }
-                  }
+                  } 
                    .iti--allow-dropdown {
                      width: 100%;
                      input {
-                       padding-left: 95px;
-                       width: calc(100% - 95px);
+                       padding-left: 105px;
+                       width: calc(100% - 103px);
                      }
                    }
                   .social-input {
@@ -201,4 +200,12 @@
    }
 }
 
-
+::ng-deep .custom-drop-wrap {
+  .mat-option {
+    font-size: 14px;
+    &:hover {
+      border-radius: 4px;
+    background-color: #f3f5f8;
+    }
+  }
+}

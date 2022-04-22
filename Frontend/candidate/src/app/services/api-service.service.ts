@@ -28,9 +28,12 @@ export class CandidateService {
 
   }
 
-  getAllCandidates(action: {filterValue: string, selectedPage: number, pageSize: number}): Observable<any> {
-    return this.http.get(`${this.baseUrl}/users?search=${action.filterValue}&page=${action.selectedPage+1}&limit=${action.pageSize}`)
-
+  getAllCandidates(action: {filterValue: string, selectedPage: number, pageSize: number, sortColumn?: string, sortType?: string}): Observable<any> {
+    let API = `${this.baseUrl}/users?search=${action.filterValue}&page=${action.selectedPage+1}&limit=${action.pageSize}`;
+    if (action.sortColumn && action.sortType) {
+      API += `&sortColumn=${action.sortColumn}&sortType=${action.sortType}`
+    }
+    return this.http.get(API);
   }
 
   getCountry() {

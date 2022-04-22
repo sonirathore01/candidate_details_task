@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../schema/user.schema';
@@ -28,6 +28,7 @@ export class UserService {
       const addressModel = new this.addressModel(address);
 
       //User Model
+    
       const user = UserMapper.toDomain(createUserDto, addressModel);
       const userModel = new this.userModel(user);
 
@@ -143,23 +144,46 @@ export class UserService {
         ]
       });
 
-      userModel = await this.userModel.find(
-          {
-            $or: [
-              { identifierNumber: { $regex: search } },
-              { firstName: { $regex: search } },
-              { lastName: { $regex: search } },
-              { emailAddress: { $regex: search } },
-              { "phoneNumber.number": search },
-              { "socialProfile.linkedin": { $regex: search } },
-              { "socialProfile.facebook": { $regex: search } },
-              { "socialProfile.twitter": { $regex: search } },
-              { address: { $in: id } }
-            ]
-          })
-          .populate('address')
-          .limit((page && limit) || (query?.limit && limit))
-          .skip(page && skip);
+      if (query.sortColumn && query.sortType) {
+        let x = {};
+        x[query.sortColumn] = query.sortType == 'asc' ? 1 : -1;
+        userModel = await this.userModel.find(
+            {
+              $or: [
+                { identifierNumber: { $regex: search } },
+                { firstName: { $regex: search } },
+                { lastName: { $regex: search } },
+                { emailAddress: { $regex: search } },
+                { "phoneNumber.number": search },
+                { "socialProfile.linkedin": { $regex: search } },
+                { "socialProfile.facebook": { $regex: search } },
+                { "socialProfile.twitter": { $regex: search } },
+                { address: { $in: id } }
+              ]
+            })
+            .populate('address')
+            .sort(x)
+            .limit((page && limit) || (query?.limit && limit))
+            .skip(page && skip);
+      } else {
+        userModel = await this.userModel.find(
+            {
+              $or: [
+                { identifierNumber: { $regex: search } },
+                { firstName: { $regex: search } },
+                { lastName: { $regex: search } },
+                { emailAddress: { $regex: search } },
+                { "phoneNumber.number": search },
+                { "socialProfile.linkedin": { $regex: search } },
+                { "socialProfile.facebook": { $regex: search } },
+                { "socialProfile.twitter": { $regex: search } },
+                { address: { $in: id } }
+              ]
+            })
+            .populate('address')
+            .limit((page && limit) || (query?.limit && limit))
+            .skip(page && skip);
+      }
 
       if (!userModel || !userModel.length) {
         throw new NotFoundError(`Candidates were not found.`);
@@ -198,5 +222,5 @@ export class UserService {
       return e.message;
     }
   }
-
+  
 }

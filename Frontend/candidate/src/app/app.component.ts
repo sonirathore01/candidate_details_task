@@ -11,6 +11,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {SelectionModel} from "@angular/cdk/collections";
 import {CandidateService} from "./services/api-service.service";
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   total: number = 0;
 
   @ViewChild(MatPaginator) paginator: any;
+  @ViewChild(MatSort) sort: any;
 
 
   constructor(public dialog: MatDialog,
@@ -51,6 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.details.paginator = this.paginator;
+    this.details.sort = this.sort;
   }
 
   public openCandidateDialog(modalTitle: string, type: 'Update' | 'Add', data?: any ): void {
@@ -110,4 +113,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.dispatch(candidateActions.deleteCandidate({candidateIds: this.selection.selected.map((c)=>c._id ? c._id : '')}));
     this.selection = new SelectionModel<UserModel>(true, []);
   }
+
+  announceSortChange(event: any) {
+    this.store.dispatch(candidateActions.getCandidates(
+      {filterValue: this.filterValue,
+        selectedPage: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        sortColumn: event.active,
+        sortType: event.direction}));
+  }
+
+  
 }

@@ -1,91 +1,122 @@
-<mat-form-field appearance="standard">
-  <input matInput (keyup)="applyFilter($event)" placeholder="Search here  " #input>
-</mat-form-field>
-<div class="details-wrap">
-  <h4 class="candidate-text">Candidates</h4>
-  <div>
-<button mat-button class="mat-raised-button delete-btn" mat-dialog-close [disabled]="!selection.hasValue()" (click)="deleteSelected()">Delete</button>
-<button mat-raised-button class="add-btn" color="primary" (click)="openCandidateDialog('Add Candidate Details', 'Add')">Add Candidate Details</button>
+
+<div class="main-wrapper-page">
+  <app-side-bar></app-side-bar>
+  <div class="data-wrapper">
+  <div class="search-textfield-wrapper">
+    <div class="search-input">
+      <img class="search" src="../assets/images/search.svg" alt="search-icon" />
+  
+      <mat-form-field appearance="standard">
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search by name or location  " #input>
+      </mat-form-field>
+    </div>
+    <div class="user-info">
+     
+        <div class="user-icon">
+          <img src="../assets/images/user.svg" alt="" />
+      </div>
+      <div class="user-text">
+        <h5>Greg Kockott</h5>
+        <p>Account Owner • HelloCrowd, Inc</p>
+      </div>
+      <div [matMenuTriggerFor]="menu" class="arrow">
+        <img src="../assets/images/angl-down.svg" alt="" />
+      </div>
+     
+      <mat-menu class="user-log" #menu="matMenu">
+        <button mat-menu-item>Logout</button>
+      </mat-menu>
+    </div>
   </div>
-  </div>
-<ng-container >
-  <table mat-table [dataSource]="details" class="mat-elevation-z8 demo-table">
+  <div class="details-wrap">
+    <h4 class="candidate-text">Candidates</h4>
+    <div>
+  <button mat-button class="mat-raised-button delete-btn" mat-dialog-close [disabled]="!selection.hasValue()" (click)="deleteSelected()">Delete</button>
+  <button mat-raised-button class="add-btn" color="primary" (click)="openCandidateDialog('Add Candidate Details', 'Add')">Add Candidate Details</button>
+    </div>
+    </div>
+  <ng-container >
+    <table mat-table [dataSource]="details" class="mat-elevation-z8 demo-table" matSort (matSortChange)="announceSortChange($event)">
+  
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef >
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef  mat-sort-header> NAME </th>
+        <td mat-cell *matCellDef="let element"> {{element.firstName}} {{element.lastName}}</td>
+      </ng-container>
+  
+  
+      <ng-container matColumnDef="identifierNumber">
+        <th mat-header-cell *matHeaderCellDef  mat-sort-header> ID NUMBER </th>
+        <td mat-cell *matCellDef="let element"> {{element.identifierNumber.slice(0, 6)}}XXXXXXX </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> LOCATION </th>
+        <td mat-cell *matCellDef="let element"> <div class="location-wrapper"><span  *ngIf="countryList" [class]="'fi fi-'+getCountryCode(element.address.country)"></span> <div class="city-content"> {{element.address.city}}, {{element.address.country}} </div> </div> </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="emailAddress">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> EMAIL ADDRESS </th>
+        <td mat-cell *matCellDef="let element"> {{element.emailAddress}} {{element.emailAddress}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="phoneNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> MOBILE NUMBER </th>
+        <td mat-cell *matCellDef="let element"> {{element.phoneNumber.countryCode ? '+' + element.phoneNumber.countryCode + " " + element.phoneNumber.number : ''}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="daysActive">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> DAYS ACTIVE </th>
+        <td mat-cell *matCellDef="let element"> < 30 days </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="icon-wrap more-horiz">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+              <img src="../../assets/images/more_horiz.svg">
+            </button>
+          </div>
+          <mat-menu class="mat-menu-wrap" #menu="matMenu">
+            <button class="mat-wrap" mat-menu-item (click)="openCandidateDialog('Edit Candidate Details', 'Update', element)">
+              <span>View Candidate</span>
+            </button>
+            <button mat-menu-item (click)="deleteCandidate(element._id)">
+              <span>Delete Candidate</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator
+      [length]="total"
+      [pageIndex]="0"
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 100]"
+      (page)="onPageChange($event)"
+      aria-label="Select page of candidates" class="pagination-wrap"></mat-paginator>
+  </ng-container>
+</div>
+</div>
 
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()"
-                      [aria-label]="checkboxLabel()">
-        </mat-checkbox>
-      </th>
-      <td mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)"
-                      [aria-label]="checkboxLabel(row)">
-        </mat-checkbox>
-      </td>
-    </ng-container>
 
-    <ng-container matColumnDef="firstName">
-      <th mat-header-cell *matHeaderCellDef> NAME </th>
-      <td mat-cell *matCellDef="let element"> {{element.firstName}} {{element.lastName}}</td>
-    </ng-container>
-
-
-    <ng-container matColumnDef="identifierNumber">
-      <th mat-header-cell *matHeaderCellDef> ID NUMBER </th>
-      <td mat-cell *matCellDef="let element"> {{element.identifierNumber.slice(0, 6)}}XXXXXXX </td>
-    </ng-container>
-
-    <ng-container matColumnDef="address">
-      <th mat-header-cell *matHeaderCellDef> LOCATION </th>
-      <td mat-cell *matCellDef="let element"> <span  *ngIf="countryList" [class]="'fi fi-'+getCountryCode(element.address.country)"></span>  {{element.address.city}} {{element.address.country}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="emailAddress">
-      <th mat-header-cell *matHeaderCellDef> EMAIL ADDRESS </th>
-      <td mat-cell *matCellDef="let element"> {{element.emailAddress}} {{element.emailAddress}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="phoneNumber">
-      <th mat-header-cell *matHeaderCellDef> MOBILE NUMBER </th>
-      <td mat-cell *matCellDef="let element"> {{element.phoneNumber.countryCode ? '+' + element.phoneNumber.countryCode + " " + element.phoneNumber.number : ''}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="daysActive">
-      <th mat-header-cell *matHeaderCellDef> DAYS ACTIVE </th>
-      <td mat-cell *matCellDef="let element"> < 30 days </td>
-    </ng-container>
-
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef> </th>
-      <td mat-cell *matCellDef="let element">
-        <div class="icon-wrap more-horiz">
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-            <img src="../../assets/images/more_horiz.svg">
-          </button>
-        </div>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="openCandidateDialog('Edit Candidate Details', 'Update', element)">
-            <span>View Candidate</span>
-          </button>
-          <button mat-menu-item (click)="deleteCandidate(element._id)">
-            <span>Delete Candidate</span>
-          </button>
-        </mat-menu>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  <mat-paginator
-    [length]="total"
-    [pageIndex]="0"
-    [pageSize]="10"
-    [pageSizeOptions]="[10, 25, 100]"
-    (page)="onPageChange($event)"
-    aria-label="Select page of candidates" class="pagination-wrap"></mat-paginator>
-</ng-container>

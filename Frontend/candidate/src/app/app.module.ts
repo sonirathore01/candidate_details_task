@@ -24,11 +24,14 @@ import {CandidateEffects} from "./app-state/candidate.effects";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatMenuModule} from "@angular/material/menu";
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CandidateDetailComponent
+    CandidateDetailComponent,
+    SideBarComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
@@ -47,6 +50,7 @@ import {MatMenuModule} from "@angular/material/menu";
     MatPaginatorModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatSortModule,
     GooglePlaceModule,
     HttpClientModule,
     Ng2TelInputModule,

@@ -61,14 +61,13 @@
           <div class="form-group" formGroupName="phoneNumber">
             <label>Mobile Number</label>
             <mat-form-field>
-              <div class="code-wrap" *ngIf="getPhoneNumberFrom.get('countryCode')?.value">+{{getPhoneNumberFrom.get('countryCode')?.value}}</div>
-              <mat-error
-                *ngIf="getPhoneNumberFrom.get('countryCode')?.touched && getPhoneNumberFrom.get('countryCode')?.errors && getPhoneNumberFrom.get('countryCode')?.errors?.required">
-                Select Country code.
-              </mat-error>
               <input matInput formControlName="number" ng2TelInput (countryChange)="onCountryChange($event)"
+                     [ng2TelInputOptions]="{
+                          separateDialCode: true
+                      }"
                      (intlTelInputObject)="telInputObject($event)"
-                     (hasError)="hasError($event)"/>
+                     (hasError)="hasError($event)" (keyup)="onChange()"
+                     (change)="onChange()" #telInput/>
               <mat-error
                 *ngIf="getPhoneNumberFrom.get('number')?.touched && getPhoneNumberFrom.get('number')?.errors && getPhoneNumberFrom.get('number')?.errors?.required">
                 Mobile Number is required
@@ -142,7 +141,7 @@
                        (input)="filterCountryOption('filter')"
                        (change)="getAddressFrom.get('province')?.reset()"
                        [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete">
+                <mat-autocomplete class="custom-drop-wrap" #auto="matAutocomplete">
                   <mat-option *ngFor="let option of filteredOptions " [value]="option[1]">
                     {{option[1]}}
                   </mat-option>
@@ -182,7 +181,7 @@
                      (click)="filterProvinceOption()"
                      (input)="filterProvinceOption('filter')"
                      [matAutocomplete]="province">
-              <mat-autocomplete #province="matAutocomplete">
+              <mat-autocomplete class="custom-drop-wrap" #province="matAutocomplete">
                 <mat-option *ngFor="let option of filteredState" [value]="option.name">
                   {{option.name}}
                 </mat-option>
