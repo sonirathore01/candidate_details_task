@@ -18,11 +18,20 @@ export class UserService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    let isEmailUnique = true;
     try {
       console.log(
         'Executing add candidate details with payload: ',
         JSON.stringify(createUserDto),
       );
+
+      const isEmailPresent =  await this.userModel.findOne({emailAddress : createUserDto.emailAddress});
+  
+      if(isEmailPresent) {
+        isEmailUnique = false;
+        throw new Error(`This email address is alredy in used`);
+      }
+      
       //Address Model
       const address = UserMapper.toAddressDto(createUserDto.address);
       const addressModel = new this.addressModel(address);
@@ -37,19 +46,18 @@ export class UserService {
       const result = await userModel.save();
       console.log('Successfully saved candidate information');
 
-      return result;
+      return result ;
     } catch (e) {
-      console.log(
-        'There was an error while saving the candidate information. Error Message',
-        e.message,
-        '\n Stack: ',
-        e.stack,
-      );
-      return e.message;
+      console.log(e.message);
+      if(!isEmailUnique) {
+        throw new BadRequestException({field: 'email', message: e.message});  
+      }
     }
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    let isEmailUnique = true;
+
     try {
       console.log(
         `Candidate: ${userId} | Executing update candidate details with payload: `,
@@ -60,8 +68,14 @@ export class UserService {
         .findById({ _id: userId })
         .populate('address');
 
-      if (!userModelExists) {
-        throw new NotFoundError(`User: ${userId} | Candidate was not found.`);
+        if (!userModelExists) {
+          throw new NotFoundError(`User: ${userId} | Candidate was not found.`);
+        }
+
+        let isEmailPresent =  await this.userModel.findOne({emailAddress : updateUserDto.emailAddress});
+
+      if(userModelExists.emailAddress===updateUserDto.emailAddress){
+        isEmailPresent=null
       }
 
       //Update Address Model
@@ -84,13 +98,12 @@ export class UserService {
 
       return userModel;
     } catch (e) {
-      console.log(
-        'There was an error while updating the candidate information. Error Message: ',
-        e.message,
-        '\n Stack: ',
-        e.stack,
-      );
-      return e.message;
+     
+      if(!isEmailUnique) {
+        throw new BadRequestException({field: 'email', message: e.message});  
+      }
+      
+      return e.message
     }
   }
 

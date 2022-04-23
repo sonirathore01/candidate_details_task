@@ -8,6 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { UserModel } from "../shared/model/candidateDetail.model";
 import { Store } from "@ngrx/store";
 import * as candidateActions from '../app-state/candidate.actions'
+import * as fromRoot from '../app-state/index';
 declare var google: any;
 
 
@@ -29,16 +30,19 @@ export class CandidateDetailComponent implements OnInit {
     lastName: "",
     phoneNumber: 0
   };
-  contryCode : any;
+  contryCode: any;
   countryStateList: any;
   filteredState: any;
-  
+  error : any;
+  field : any;
+
+
   placeOptions = {
     bounds: new google.maps.LatLngBounds(
       new google.maps.LatLng(85, -180),
       new google.maps.LatLng(-85, 180)
     ),
-    componentRestrictions: { country: this.apiService.country},
+    componentRestrictions: { country: this.apiService.country },
     fields: ["address_components", "geometry", "icon", "name"],
     strictBounds: false,
     types: [],
@@ -53,11 +57,11 @@ export class CandidateDetailComponent implements OnInit {
 
   constructor(public utilityService: UtilityService, public apiService: CandidateService,
     public dialogRef: MatDialogRef<CandidateDetailComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private  fb: FormBuilder,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder,
     private readonly store: Store) {
     this.modalTitle = this.data?.modalTitle;
     this.initCandidateFrom();
-    this.apiService.getCountryState().subscribe((res)=> {
+    this.apiService.getCountryState().subscribe((res) => {
       this.countryStateList = res;
     });
   }
@@ -93,12 +97,34 @@ export class CandidateDetailComponent implements OnInit {
   save() {
     if (this.type === 'Add') {
       this.store.dispatch(candidateActions.addCandidate({ candidate: this.candidateFrom.value }));
-      this.dialogRef.close();
+
+      this.store.select(fromRoot.getCandidates).subscribe((data: any) => {
+        
+        if(Object.keys(data.error).length!==0){
+          this.error = data.error.message;
+          this.field  = data.error.field;
+          data.error = null
+        }
+        if (data.status === "success") {
+          this.error = data.error
+          this.dialogRef.close()
+        }
+      });
+
     } else if (this.type === 'Update') {
       this.store.dispatch(candidateActions.updateCandidate({ candidate: this.candidateFrom.value, id: this.candidateFrom.value._id }));
-      this.dialogRef.close();
+      this.store.select(fromRoot.getCandidates).subscribe((data: any) => {
+        
+        if(Object.keys(data.error).length!==0){
+          this.error = data.error.message;
+          this.field  = data.error.field;
+        }
+        if (data.status === "success") {
+          this.error = data.error
+          this.dialogRef.close()
+        }
+      });
     }
-
   }
 
   getRequireData(control: string) {
@@ -127,7 +153,7 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   onCountryChange(event: any) {
-    this.contryCode =  event.dialCode
+    this.contryCode = event.dialCode
     this.getPhoneNumberFrom.get('countryCode')?.setValue(event.dialCode);
   }
 
@@ -141,11 +167,11 @@ export class CandidateDetailComponent implements OnInit {
     obj.setCountry(this.apiService.country);
     this.telInstance = obj;
   }
-  
+
 
 
   private initCandidateFrom(): void {
-    
+
     this.candidateFrom = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -194,13 +220,13 @@ export class CandidateDetailComponent implements OnInit {
     }
   }
 
-  propagateChange = (_: any) => {};
+  propagateChange = (_: any) => { };
 
   registerOnChange(fn: any) {
     this.propagateChange = fn;
   }
 
-  onTouched = () => {};
+  onTouched = () => { };
 
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;

@@ -1,26 +1,30 @@
 import {
   Body,
-  Controller, Delete,
+  Controller, 
   Get,
   HttpCode,
   Param,
   Patch,
   Post,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { query } from 'express';
+import { HttpExceptionFilter } from '../services/http-exception.filter';
+
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UseFilters(new HttpExceptionFilter())
   @HttpCode(201)
   public async create(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.create(createUserDto);
+    const data = await this.userService.create(createUserDto);
+    return data;
   }
 
   @Patch('/:userId')

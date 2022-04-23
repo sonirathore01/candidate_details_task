@@ -9,13 +9,17 @@ export interface State {
   currentCandidate?: UserModel;
   total?: number;
   deleteCandidateId: string[];
+  error?: any,
+  status : string
 }
 
 export const initialState: State = {
   candidates: storage.getItem('candidates').candidates,
   currentCandidate: {} as UserModel,
   total: 0,
-  deleteCandidateId: []
+  deleteCandidateId: [],
+  error : '',
+  status : ''
 };
 
 
@@ -41,8 +45,18 @@ const candidateReducer = createReducer(
     return {
       ...state,
       candidates: candidates,
+      status:"success",
+      error : '',
       total: state.total ? state.total + 1 : 1
     };
+  }),
+  on(candidateActions.addCandidateFailure, (state,result) => {
+    if(result.error) {
+      return  {...state , error : result.error.message, status : ''};
+    }else {
+      return {...state};
+    }
+    
   }),
 
   on(candidateActions.updateCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate})),
@@ -57,8 +71,18 @@ const candidateReducer = createReducer(
     return {
       ...state,
       candidates: candidates,
+      status : "success",
+      error : '',
       total: state.total
     };
+  }),
+  on(candidateActions.updateCandidateFailure, (state,result) => {
+    if(result.error) {
+      return  {...state , error : result.error.message, status : ''};
+    }else {
+      return {...state};
+    }
+    
   }),
 
   on(candidateActions.deleteCandidate, (state, {candidateIds}) => ({...state, deleteCandidateId: candidateIds})),
@@ -83,6 +107,8 @@ export function reducer(state: State | undefined, action: Action): any {
 export const getCandidates = (state: State) => {
   return {
     candidates: state.candidates,
-    total: state.total
+    total: state.total,
+    error : state.error,
+    status:state.status
   };
 };

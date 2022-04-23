@@ -100,6 +100,13 @@
                   padding: 0;
                   border-top: 0;
                   position: relative;
+                 .error-msg {
+                   position: absolute;
+                   bottom: -17px;
+                    color: #f44336;
+                    font-size: 10.5px;
+                    margin-bottom: 0;
+                  }
                   .code-wrap {
                     position: absolute;
                     left: 36px;
@@ -139,8 +146,6 @@
                   .mat-form-field-label-wrapper {
                     top: 0;
                     .mat-form-field-label {
-                      //transform: unset;
-                      //line-height: 40px;
                       top: 12px;
                       padding: 0 10px;
 

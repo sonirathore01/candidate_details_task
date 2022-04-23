@@ -1,6 +1,7 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './user/services/http-exception.filter';
 import { env } from './utils/env/env';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
     });
 
     app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.listen(env.app.port);
 

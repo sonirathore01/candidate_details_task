@@ -47,6 +47,11 @@
                   *ngIf="candidateFrom.get('emailAddress')?.touched && candidateFrom.get('emailAddress')?.errors && candidateFrom.get('emailAddress')?.errors?.email">
                   Enter valid Email Address
                 </mat-error>
+                <!-- <mat-error
+                  *ngIf="error && field=='email'">
+                  {{error}}
+                </mat-error> -->
+                <p class="error-msg" *ngIf="error && (field==='email' || field ==='both')">{{error}} </p>
               </mat-form-field>
               <ng-container *ngIf="candidateFrom.get('emailAddress')?.touched && !candidateFrom.get('emailAddress')?.valid">
                 <div class="icon-wrap">
@@ -95,6 +100,7 @@
                   Please enter a valid South African Identity Number
                 </mat-error>
               </mat-form-field>
+              <p class="error-msg" *ngIf="error && (field === 'identifierNumber' || field==='both')">{{error}}</p>
               <ng-container
                 *ngIf="candidateFrom.get('identifierNumber')?.touched && !candidateFrom.get('identifierNumber')?.valid">
                 <div class="icon-wrap">
@@ -251,7 +257,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button class="outline-btn-cancel" color="primary" mat-dialog-close>Cancel</button>
-    <button mat-raised-button class="btn-save" color="primary" [mat-dialog-close]="candidateFrom.value"
+    <button mat-raised-button class="btn-save" color="primary" 
             cdkFocusInitial
             [disabled]="!candidateFrom.valid"
             (click)="save()">Save
