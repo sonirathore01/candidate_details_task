@@ -78,6 +78,11 @@ export class UserService {
         isEmailPresent=null
       }
 
+      if(isEmailPresent) {
+        isEmailUnique = false;
+        throw new Error(`Email address is alredy in used`);
+      }
+
       //Update Address Model
       const address = await this.addressModel.findOneAndUpdate(
         { _id: userModelExists.address._id },
@@ -98,12 +103,10 @@ export class UserService {
 
       return userModel;
     } catch (e) {
-     
       if(!isEmailUnique) {
         throw new BadRequestException({field: 'email', message: e.message});  
       }
       
-      return e.message
     }
   }
 
