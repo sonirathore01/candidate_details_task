@@ -35,19 +35,18 @@ export class CandidateDetailComponent implements OnInit {
   filteredState: any;
   error : any;
   field : any;
-
+  center : any = new google.maps.LatLng(this.apiService.location.latitude,this.apiService.location.longitude);
+  circle : any = new google.maps.Circle({
+    center : this.center,
+    radius: 10000
+  }) 
 
   placeOptions = {
-    bounds: new google.maps.LatLngBounds(
-      new google.maps.LatLng(85, -180),
-      new google.maps.LatLng(-85, 180)
-    ),
-    componentRestrictions: { country: this.apiService.country },
-    fields: ["address_components", "geometry", "icon", "name"],
-    strictBounds: false,
-    types: [],
-    origin: new google.maps.LatLng()
-  };
+    location:[this.center],
+    bounds : this.circle.getBounds(),
+    fields: ["address_components"],
+    types: []
+  } as any;
   telInstance: any;
 
   @ViewChild('placesRef')
@@ -164,7 +163,7 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   telInputObject(obj: any) {
-    obj.setCountry(this.apiService.country);
+    obj.setCountry(this.apiService.location.country);
     this.telInstance = obj;
   }
 

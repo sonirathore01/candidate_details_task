@@ -10,11 +10,11 @@ import {Observable} from "rxjs";
 export class CandidateService {
 
   baseUrl: string = environment.baseUrl;
-  country = '';
+  location: any;
 
   constructor(private http: HttpClient) {
     this.getCountry().subscribe((res: any)=> {
-      this.country = res.country;
+      this.location = res;
     })
   }
 
