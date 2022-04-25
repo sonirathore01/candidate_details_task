@@ -117,6 +117,7 @@
                     border-right: solid 1px #d8d8d8;
                     .iti__selected-flag {
                       position: relative;
+                      background: transparent;
                       .iti__arrow {
                         position: absolute;
                         right: 8px;
@@ -206,8 +207,11 @@
 }
 
 ::ng-deep .custom-drop-wrap {
+  padding: 5px;
   .mat-option {
     font-size: 14px;
+    height: 36px;
+    line-height: 36px;
     &:hover {
       border-radius: 4px;
     background-color: #f3f5f8;

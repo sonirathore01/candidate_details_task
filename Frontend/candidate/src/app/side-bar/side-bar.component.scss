@@ -27,20 +27,7 @@
             align-items: center;
             width: 100%;
             margin-bottom: 20px;
-            &.active {
-               
-                a {
-                    background-color: #eef2f6;
-                    color: #49a6da;
-                    .blue {
-                        display: block;
-                    }
-                    .gray {
-                        display: none;
-                    }
-
-                }
-            }
+           
             a {
                 display: flex;
                 justify-content: center;
@@ -50,18 +37,18 @@
                 border-radius: 4px;
                 background: transparent;
                 color: rgba(0, 0, 0, 0.3);
-                .blue {
-                    display: none;
-                }
+              
+               
                 &:hover, &.active {
                     background-color: #eef2f6;
-                    color: #49a6da;
-                    .blue {
-                        display: block;
+                    fill: #49a6da;
+                    svg {
+                        path {
+                            fill: #49a6da;
+                            opacity: 1;
+                        }
                     }
-                    .gray {
-                        display: none;
-                    }
+                  
                 }
             }
         }
@@ -79,17 +66,16 @@
             justify-content: center;
             align-items: center;
             background: transparent;
-            .blue {
-                display: none;
-            }
+          
             &:hover, &.active {
                 background-color: #eef2f6;
-                color: #49a6da;
-                .blue {
-                    display: block;
-                }
-                .gray {
-                    display: none;
+                fill: #49a6da;
+                svg {
+                    path {
+                        fill: #49a6da;
+                        opacity: 1;
+                        pointer-events:all;
+                    }
                 }
             }
            

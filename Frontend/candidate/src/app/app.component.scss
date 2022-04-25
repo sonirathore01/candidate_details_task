@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  .add-btn{
+ ::ng-deep .add-btn{
     margin-left: 20px;
     height: 40px;
     font-size: 14px;
@@ -21,7 +21,11 @@
     border-radius: 4px;
     box-shadow: none;
     background-color: #3fa6d9;
+    .mat-button-wrapper {
+      display: flex;
+      align-items: center;
   }
+}
   .delete-btn{
     background-color: #eef2f6;
     padding: 0 12px;
@@ -37,12 +41,21 @@
    margin: 0;
   }
 }
+.data-table-wrapper {
+  width: 100%;  
+  max-width: 100%;
+  overflow: auto;
+ 
+}
 .demo-table {
-  width: 100%;
+  max-width: 100%;
+  overflow: auto;
   border-radius: 4px;
   border: solid 1px #e9edf1;
   box-shadow: none;
-  overflow: hidden;
+  width: 100%;
+  // overflow: hidden;
+  position: relative;
   .mat-header-row{
     height: 60px;
     .mat-header-cell{
@@ -70,38 +83,64 @@
           border-color: rgba(0, 0, 0, 0.3);
         }
       }
-      
       // .mat-checkbox{
       //   margin-right: 32px;
       // }
       &.cdk-column-select{
-        width: 5%;
+       min-width: 50px;
+       max-width: 50px;
         text-align: center;
-        padding-left: 28px;
+        padding-left: 17px;
+        ::ng-deep .mat-checkbox {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .mat-checkbox-layout {
+            .mat-checkbox-inner-container {
+              height: 18px;
+              width: 18px;
+            }
+          }
+        }
       }
       &.cdk-column-firstName{
-        width: 13%;
+        min-width: 120px;
+        max-width: 120px;
       }
       &.cdk-column-identifierNumber{
-        width: 10%;
+        // width: 10%;
+        min-width: 80px;
+        max-width: 100px;
       }
       &.cdk-column-address{
-        width: 20%;
+        // width: 20%;
+        min-width: 170px;
+        max-width: 200px;
         .city-content {
           line-height: 18px;
         }
       }
       &.cdk-column-emailAddress{
-        width: 20%;
+        // width: 20%;
+        min-width: 100px;
+        max-width: 180px;
       }
       &.cdk-column-phoneNumber{
-        width: 15%;
+        // width: 15%;
+        min-width: 100px;
+        max-width: 100px;
+        white-space: nowrap;
       }
       &.cdk-column-daysActive{
-        width: 12%;
+        // width: 12%;
+        min-width: 110px;
+        max-width: 110px;
       }
       &.cdk-column-action{
-        width: 5%;
+        width:25px;
+        padding-right: 26px;
       }
       .mat-checkbox-frame {
         border-color: rgba(0, 0, 0, 0.3);
@@ -127,15 +166,35 @@
       left: 0;
       bottom: 0;
       right: 0;
+      z-index: 1;
     }
     .mat-cell{
       border-bottom-color: transparent;
       padding: 0 15px;
-      &:first-child{
+      &:nth-of-type(2) {
+        min-width: 120px;
+        max-width: 120px;
+      }
+      &:first-child {
        text-align: center;
-       padding-left: 28px;
+       padding-left: 17px;
+       min-width: 50px;
+       max-width: 50px;
       }
       ::ng-deep{
+        .mat-checkbox {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .mat-checkbox-layout {
+            .mat-checkbox-inner-container {
+              height: 18px;
+              width: 18px;
+            }
+          }
+        }
         .mat-checkbox-checked.mat-accent {
           .mat-checkbox-background{
             background-color: #3fa6d9;
@@ -180,6 +239,7 @@
     }
     .mat-column-action{
      text-align: right;
+     padding-right: 26px;
     }
   }
   &::ng-deep {
@@ -194,6 +254,7 @@
       }
   }
 }
+
 .pagination-wrap{
   background-color: #f3f5f8;
   border: 1px solid #e9edf1;
@@ -275,7 +336,7 @@
     align-items: center;
     justify-content: center;
     &.mat-focus-indicator{
-      &:focus, &:hover {
+      &:focus, &:hover, &.active {
         border-radius: 4px;
         background-color: #f3f5f8;
       }
@@ -290,7 +351,10 @@
   height: 71px;
   justify-content: space-between;
   // border-bottom: solid 1px #e9edf1;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  background: #fff;
   &:before {
     content: '';
     position: absolute;
@@ -313,6 +377,7 @@
            
             input {
               &::placeholder {
+                font-size: 14px;
                 color:rgba(0, 0, 0, 0.3);
               }
             }
@@ -391,8 +456,19 @@
 
 
 ::ng-deep .user-log {
+  padding: 5px;
   min-height: auto !important;
   .mat-menu-content:not(:empty) {
     padding: 0;
+    .mat-menu-item {
+      height: 36px;
+      line-height: 36px;
+      border-radius: 4px;
+    } 
   }
+}
+
+.more-horiz button[aria-expanded="true"]{
+  background-color: #f3f5f8;
+  border-radius: 4px;
 }
