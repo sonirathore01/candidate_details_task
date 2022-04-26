@@ -49,12 +49,11 @@
 }
 .demo-table {
   max-width: 100%;
-  overflow: auto;
   border-radius: 4px;
   border: solid 1px #e9edf1;
   box-shadow: none;
   width: 100%;
-  // overflow: hidden;
+  overflow: auto;
   position: relative;
   .mat-header-row{
     height: 60px;
@@ -141,6 +140,7 @@
       &.cdk-column-action{
         width:25px;
         padding-right: 26px;
+        right: -1.5px !important;
       }
       .mat-checkbox-frame {
         border-color: rgba(0, 0, 0, 0.3);
@@ -174,11 +174,13 @@
       &:nth-of-type(2) {
         min-width: 120px;
         max-width: 120px;
+        left: 80px !important;
       }
       &:first-child {
        text-align: center;
        padding-left: 17px;
        min-width: 50px;
+       left: -1px !important;
        max-width: 50px;
       }
       ::ng-deep{
@@ -240,6 +242,7 @@
     .mat-column-action{
      text-align: right;
      padding-right: 26px;
+     right: -1px !important;
     }
   }
   &::ng-deep {
