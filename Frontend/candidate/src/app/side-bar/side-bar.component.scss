@@ -1,19 +1,19 @@
+@import '../../variables.scss';
+@import '../../mixins.scss';
+
 .sidebar {
-    display: flex;  
-    flex-direction: column;
-    width: 70px;
-    border-right: solid 1px #e9edf1;
+    @include flex(column, center, center);
+    width: $sidebar-width;
+    border-right: solid 1px $border-color;
     position: fixed;
     left: 0;
     height: 100%;   
     flex: 1;
     cursor: pointer;
     .logo {
-        height: 71px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 14px;
+        height: $sidebar-width;
+        @include flex(row, center, center);
+        margin-bottom: $border-half-radius;
     }
     ul {
         padding-left: 0;
@@ -22,29 +22,25 @@
         overflow: auto;
         li {
             list-style: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            @include flex(row, center, center);
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom:$margin-m;
            
             a {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 40px;
-                height: 40px;
-                border-radius: 4px;
-                background: transparent;
-                color: rgba(0, 0, 0, 0.3);
+                @include flex(row, center, center);
+                width: $btn-height;
+                height: $btn-height;
+                border-radius: $border-half-radius;
+                background: $transparent;
+                color: $light-black;
               
                
                 &:hover, &.active {
-                    background-color: #eef2f6;
-                    fill: #49a6da;
+                    background-color: $light-gray;
+                    fill: $fill-color;
                     svg {
                         path {
-                            fill: #49a6da;
+                            fill: $fill-color;
                             opacity: 1;
                         }
                     }
@@ -54,25 +50,22 @@
         }
     }
     .setting-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include flex(row, center, center);
         width: 100%;
-        height: 70px;
+        height: $sidebar-height;
         .setting-wrap {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;display: flex;
-            justify-content: center;
-            align-items: center;
-            background: transparent;
+            width: $btn-height;
+            height: $btn-height;
+            border-radius: $border-half-radius;
+            @include flex(row, center, center);
+            background: $transparent;
           
             &:hover, &.active {
-                background-color: #eef2f6;
-                fill: #49a6da;
+                background-color: $light-gray;
+                fill: $fill-color;
                 svg {
                     path {
-                        fill: #49a6da;
+                        fill: $fill-color;
                         opacity: 1;
                         pointer-events:all;
                     }

@@ -1,10 +1,11 @@
-
+@import '../../variables.scss';
+@import '../../mixins.scss';
   .candidate-wrapper {
   h2 {
-    border-bottom: solid 1px #ecf0f3;
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
+    border-bottom: solid 1px $border-color;
+    font-size: $size-md;
+    font-weight: $bold-weight;
+    color: $black;
     margin-bottom: 0;
     padding: 25px 50px;
   }
@@ -20,7 +21,7 @@
         width: 100%;
         gap: 30px;
         &.border-bottom {
-          border-bottom: solid 1px #e9edf1;
+          border-bottom: solid 1px $border-color;
         }
         .form-group {
           flex: 1;
@@ -40,41 +41,37 @@
 
           }
           label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #000;
+            font-size: $size-xs;
+            font-weight: $bold-weight;
+            color: $black;
             height: 20px;
             margin-bottom: 7px;
             &.reset-label {
-              display: flex;
-              font-size: 12px;
+              @include flex(row, center, center);
+              font-size: $size-Xxs;
               text-align: right;
-              color: #3fa6d9;
-              border-radius: 5px;
+              color: $base-color;
+              border-radius: $border-half-radius;
               width: 50px;
-              align-items: center;
-              justify-content: center;
               align-self: end;
               cursor: pointer;
                &:hover {
                 transform: scale(1.02);
-                color: #0d9ee7;
+                color: $blue-color;
               }
             }
           }
           .icon-wrap {
             position: absolute;
             right: 10px;
-            top: 12px;
-            width: 16px;
-            min-width: 16px;
-            height: 16px;
-            background: #fff;
+            top: $size-Xxs;
+            width: $size-s;
+            min-width: $size-s;
+            height: $size-s;
+            background: $white;
             color: red;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border-radius: $rounded;
+            @include flex(flex, center, center);
 
           }
           ::ng-deep .mat-form-field {
@@ -82,19 +79,19 @@
             .mat-form-field-wrapper {
 
               .mat-form-field-flex {
-                border-radius: 4px;
-                border: solid 1px #d8d8d8;
-                background-color: #fff;
+                border-radius: $border-half-radius;
+                border: solid 1px $candi-border;
+                background-color: $white;
                 .place-site {
                   line-height: 1px;
                   position: relative;
-                  top: -12px;
+                  top: -$size-Xxs;
                   left: 6px;
-                  color: rgba(0, 0, 0, 0.5);
+                  color: $light-black;
                 }
                 &:focus, &:focus-within {
                   box-shadow: 0 0 0 3px rgba(63, 166, 217, 0.3);
-                  border: solid 1px #3fa6d9;
+                  border: solid 1px $base-color;
                 }
                 .mat-form-field-infix {
                   padding: 0;
@@ -109,15 +106,15 @@
                   }
                   .code-wrap {
                     position: absolute;
-                    left: 36px;
+                    left: $size-full-icon;
                     top: 12.5px;
                   }
                   .iti__flag-container {
                     width: 90px;
-                    border-right: solid 1px #d8d8d8;
+                    border-right: solid 1px $candi-border;
                     .iti__selected-flag {
                       position: relative;
-                      background: transparent;
+                      background: $transparent;
                       .iti__arrow {
                         position: absolute;
                         right: 8px;
@@ -132,8 +129,8 @@
                      }
                    }
                   .social-input {
-                    border-left: solid 1px #d8d8d8;
-                    margin-left: 12px;
+                    border-left: solid 1px $candi-border;
+                    margin-left: $size-Xxs;
                     width: calc(100% - 30px);
                   }
                   input {
@@ -142,18 +139,18 @@
                   }
                   .input-icon {
                     padding: 0 30px 0 10px;
-                    width: calc(100% - 40px); 
+                    width: calc(100% - $btn-height); 
                   }
                   .mat-form-field-label-wrapper {
                     top: 0;
                     .mat-form-field-label {
-                      top: 12px;
+                      top: $size-Xxs;
                       padding: 0 10px;
 
                     }
                   }
                   .mat-input-element {
-                    height: 40px;
+                    height: $btn-height;
                   }
                   .mat-form-field-label-wrapper {
                     padding: 0;
@@ -171,24 +168,24 @@
   }
   .mat-dialog-actions {
     background-color: #f3f5f8;
-    padding: 16px 50px;
+    padding: $size-s 50px;
     min-height: 38px;
     margin-bottom: 0;
     .outline-btn-cancel {
       width: 114px;
-      height: 40px;
-      color: #3fa6d9;
-      font-size: 14px;
-      font-weight: 600;
+      height: $btn-height;
+      color: $base-color;
+      font-size: $size-xs;
+      font-weight: $bold-weight;
     }
     .btn-save {
       width: 114px;
-      height: 40px;
-      border-radius: 4px;
-      background-color: #3fa6d9;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
+      height: $btn-height;
+      border-radius: $border-half-radius;
+      background-color: $base-color;
+      font-size: $size-xs;
+      font-weight: $bold-weight;
+      color: $white;
     }
 
   }
@@ -209,12 +206,12 @@
 ::ng-deep .custom-drop-wrap {
   padding: 5px;
   .mat-option {
-    font-size: 14px;
-    height: 36px;
-    line-height: 36px;
+    font-size: $size-xs;
+    height: $size-full-icon;
+    line-height: $size-full-icon;
     &:hover {
-      border-radius: 4px;
-    background-color: #f3f5f8;
+      border-radius: $border-half-radius;
+    background-color: $gray-white;
     }
   }
 }

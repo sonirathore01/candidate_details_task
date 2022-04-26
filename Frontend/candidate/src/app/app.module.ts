@@ -26,6 +26,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatMenuModule} from "@angular/material/menu";
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { MatSortModule } from '@angular/material/sort';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MatSortModule } from '@angular/material/sort';
     GooglePlaceModule,
     HttpClientModule,
     Ng2TelInputModule,
+    NgxSkeletonLoaderModule,
     StoreModule.forRoot(reducers, {
       metaReducers
     }),
