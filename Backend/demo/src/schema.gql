@@ -1,0 +1,109 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Address {
+  _id: ID
+  addressLine1: String!
+  addressLine2: String
+  country: String!
+  city: String!
+  province: String!
+  postalCode: String!
+}
+
+type socialProfile {
+  linkedin: String
+  facebook: String
+  twitter: String
+}
+
+type phoneNumber {
+  countryCode: String!
+  number: String!
+}
+
+type User {
+  _id: ID!
+  identifierNumber: String!
+  firstName: String!
+  lastName: String!
+  emailAddress: String!
+  phoneNumber: phoneNumber!
+  address: Address!
+  socialProfile: socialProfile
+}
+
+type DeleteUser {
+  message: String!
+}
+
+type UserList {
+  items: [User!]!
+  total: Float!
+}
+
+type Query {
+  user(query: GetUserArgs): UserList!
+  userById(id: String!): User!
+}
+
+input GetUserArgs {
+  search: String
+  limit: Float
+  page: Float
+  sortColumn: String
+  sortType: String
+}
+
+type Mutation {
+  createUser(userData: CreateUserArgs!): User!
+  updateUser(data: UpdateUserArgs!): User!
+  deleteUser(data: DeleteUserArg!): DeleteUser!
+}
+
+input CreateUserArgs {
+  _id: String
+  identifierNumber: String!
+  firstName: String!
+  lastName: String!
+  emailAddress: String!
+  phoneNumber: phoneNumberArg!
+  address: AddressArg!
+  socialProfile: socialProfileArg
+}
+
+input phoneNumberArg {
+  countryCode: String!
+  number: String!
+}
+
+input AddressArg {
+  addressLine1: String!
+  addressLine2: String
+  country: String!
+  city: String!
+  province: String!
+  postalCode: String!
+}
+
+input socialProfileArg {
+  linkedin: String
+  facebook: String
+  twitter: String
+}
+
+input UpdateUserArgs {
+  _id: String
+  identifierNumber: String!
+  firstName: String!
+  lastName: String!
+  emailAddress: String!
+  phoneNumber: phoneNumberArg!
+  address: AddressArg!
+  socialProfile: socialProfileArg
+}
+
+input DeleteUserArg {
+  ids: [String!]!
+}

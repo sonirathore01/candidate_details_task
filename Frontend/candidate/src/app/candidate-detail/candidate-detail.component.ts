@@ -19,7 +19,7 @@ declare var google: any;
 })
 export class CandidateDetailComponent implements OnInit {
 
-  type: string = 'Add';
+  type: string = '';
   modalTitle: string = 'Candidate Details';
   candidateFrom: FormGroup = new FormGroup({});
   filteredOptions: any;
@@ -30,7 +30,7 @@ export class CandidateDetailComponent implements OnInit {
     lastName: "",
     phoneNumber: 0
   };
-  contryCode: any;
+  countryCode: any;
   countryStateList: any;
   filteredState: any;
   error : any;
@@ -39,7 +39,7 @@ export class CandidateDetailComponent implements OnInit {
   circle : any = new google.maps.Circle({
     center : this.center,
     radius: 10000
-  }) 
+  })
 
   placeOptions = {
     location:[this.center],
@@ -67,8 +67,10 @@ export class CandidateDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.type = this.data?.type;
-    if (this.data && this.data.candidateDetails) {
-      this.candidateFrom.patchValue(this.data.candidateDetails)
+    if (this.data && this.data.candidateId) {
+      this.apiService.getCandidateDetails(this.data.candidateId).then((res: UserModel)=>{
+        this.candidateFrom.patchValue(res)
+      })
     }
 
   }
@@ -98,7 +100,7 @@ export class CandidateDetailComponent implements OnInit {
       this.store.dispatch(candidateActions.addCandidate({ candidate: this.candidateFrom.value }));
 
       this.store.select(fromRoot.getCandidates).subscribe((data: any) => {
-        
+
         if(Object.keys(data.error).length!==0){
           this.error = data.error.message;
           this.field  = data.error.field;
@@ -111,10 +113,10 @@ export class CandidateDetailComponent implements OnInit {
       });
 
     } else if (this.type === 'Update') {
-      this.store.dispatch(candidateActions.updateCandidate({ candidate: this.candidateFrom.value, id: this.candidateFrom.value._id }));
+      this.store.dispatch(candidateActions.updateCandidate({ candidate: this.candidateFrom.value}));
       this.store.select(fromRoot.getCandidates).subscribe((data: any) => {
-        
-        if(Object.keys(data.error).length!==0){
+
+        if(data.error && Object.keys(data.error).length!==0){
           this.error = data.error.message;
           this.field  = data.error.field;
         }
@@ -152,7 +154,7 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   onCountryChange(event: any) {
-    this.contryCode = event.dialCode
+    this.countryCode = event.dialCode
     this.getPhoneNumberFrom.get('countryCode')?.setValue(event.dialCode);
   }
 

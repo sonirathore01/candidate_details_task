@@ -47,10 +47,9 @@
   }
 }
 .data-table-wrapper {
-  width: 100%;  
+  width: 100%;
   max-width: 100%;
   overflow: auto;
- 
 }
 .demo-table {
   max-width: 100%;
@@ -160,26 +159,13 @@
         border-bottom: 1px solid $border-color;
       }
     }
-    &::after {
-      content: "";
-      display: block;
-      background-color: $border-color;
-      height: 1px;
-      width: calc(100% - 50px);
-      position: absolute;
-      margin: 0 auto;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      z-index: 1;
-    }
     .mat-cell{
-      border-bottom-color: $transparent;
+      border-bottom-color: $border-color;
       padding: 0 15px;
       ::ng-deep {
         ngx-skeleton-loader {
           .loader {
-            margin: 0;    
+            margin: 0;
           }
         }
       }
@@ -187,12 +173,32 @@
         min-width: 150px;
         max-width: 150px;
       }
+      &:last-child {
+        &::before {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          height: 1px;
+          width: 25px;
+          right: 0;
+          background: $white;
+        }
+      }
       &:first-child {
        text-align: center;
        padding-left: 17px;
        min-width: 30px;
        left: -1px !important;
        max-width: 30px;
+       &::after {
+         content: '';
+         position: absolute;
+         width: 25px;
+         height: 1px;
+         bottom: -1px;
+         left: 0;
+         background: $white;
+       }
        ngx-skeleton-loader {
         width: $btn-height;
         height: $btn-height;
@@ -244,7 +250,6 @@
           background-size: cover;
           background-position: center;
           margin-right: $margin-xs;
-          
         }
         .city-content {
           line-height: $checkbox-size;
@@ -303,7 +308,7 @@
       color: $black;
       &.mat-button-disabled{
         color: rgba(0,0,0,.26);
-       
+
       }
     }
     .mat-form-field-underline{
@@ -397,7 +402,7 @@
           .mat-form-field-infix {
             width: 320px;
             padding-top: 0;
-           
+
             input {
               &::placeholder {
                 font-size: $size-xs;
@@ -479,7 +484,7 @@
       height: $size-full-icon;
       line-height: $size-full-icon;
       border-radius: $border-half-radius;
-    } 
+    }
   }
 }
 

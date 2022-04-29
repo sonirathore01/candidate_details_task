@@ -43,14 +43,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: 0, pageSize: 10}));
+    this.store.dispatch(candidateActions.getCandidates({search: this.filterValue, page: 1, limit: 10, sortColumn: '',
+      sortType: ''}));
     this.store.select(fromRoot.getCandidates).pipe(
       distinctUntilChanged()
     ).subscribe((data: any) => {
       this.total = data.total;
-        this.details =  new MatTableDataSource(data.candidates ? [...data.candidates] : []);
-        this.isLoading = false;
+      this.isLoading = data.loading;
+      this.details =  new MatTableDataSource(data.candidates ? [...data.candidates] : []);
     });
   }
 
@@ -62,15 +62,15 @@ export class AppComponent implements OnInit, OnDestroy {
   public openCandidateDialog(modalTitle: string, type: 'Update' | 'Add', data?: any ): void {
 
     this.dialog.open(CandidateDetailComponent, {
-      data: {type, modalTitle, candidateDetails: data}
+      data: {type, modalTitle, candidateId: data?._id}
     })
   }
 
   applyFilter(event: Event) {
     this.filterValue = (event.target as HTMLInputElement).value;
     this.paginator.pageIndex = 0;
-    this.isLoading = true;
-    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: this.paginator.pageIndex, pageSize: this.paginator.pageSize}));
+    this.store.dispatch(candidateActions.getCandidates({search: this.filterValue, page: this.paginator.pageIndex+1, limit: this.paginator.pageSize, sortColumn: '',
+      sortType: ''}));
   }
 
   isAllSelected() {
@@ -106,30 +106,27 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: any) {
-    this.isLoading = true;
-    this.store.dispatch(candidateActions.getCandidates({filterValue: this.filterValue, selectedPage: this.paginator.pageIndex, pageSize: this.paginator.pageSize}));
+    this.store.dispatch(candidateActions.getCandidates({search: this.filterValue, page: this.paginator.pageIndex+1, limit: this.paginator.pageSize, sortColumn: '',
+      sortType: ''}));
   }
 
   deleteCandidate(id: string) {
-    this.isLoading = true;
-    this.store.dispatch(candidateActions.deleteCandidate({candidateIds: [id]}));
+    this.store.dispatch(candidateActions.deleteCandidate({ids: [id]}));
   }
 
   deleteSelected() {
-    this.isLoading = true;
-    this.store.dispatch(candidateActions.deleteCandidate({candidateIds: this.selection.selected.map((c)=>c._id ? c._id : '')}));
+    this.store.dispatch(candidateActions.deleteCandidate({ids: this.selection.selected.map((c)=>c._id ? c._id : '')}));
     this.selection = new SelectionModel<UserModel>(true, []);
   }
 
   announceSortChange(event: any) {
-    this.isLoading = true;
     this.store.dispatch(candidateActions.getCandidates(
-      {filterValue: this.filterValue,
-        selectedPage: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
+      {search: this.filterValue,
+        page: this.paginator.pageIndex+1,
+        limit: this.paginator.pageSize,
         sortColumn: event.active,
         sortType: event.direction}));
   }
 
-  
+
 }

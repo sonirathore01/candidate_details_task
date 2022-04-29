@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../schema/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserMapper } from '../mappers/user-mapper';
 import { Address } from '../schema/address.schema';
 import { NotFoundError } from 'rxjs';
+import { CreateUserArgs, DeleteUserArg, UpdateUserArgs, UserList } from '../type/user-data.type';
+import { DeleteUser } from '../type/user.type';
 
 @Injectable()
 export class UserService {
@@ -17,15 +17,15 @@ export class UserService {
     private addressModel: Model<Address>,
   ) { }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserArgs: CreateUserArgs): Promise<any> {
     let isEmailUnique = true;
     try {
       console.log(
         'Executing add candidate details with payload: ',
-        JSON.stringify(createUserDto),
+        JSON.stringify(createUserArgs),
       );
 
-      const isEmailPresent =  await this.userModel.findOne({emailAddress : createUserDto.emailAddress});
+      const isEmailPresent =  await this.userModel.findOne({emailAddress : createUserArgs.emailAddress});
   
       if(isEmailPresent) {
         isEmailUnique = false;
@@ -33,48 +33,48 @@ export class UserService {
       }
       
       //Address Model
-      const address = UserMapper.toAddressDto(createUserDto.address);
+      const address = UserMapper.toAddressDto(createUserArgs.address);
       const addressModel = new this.addressModel(address);
 
       //User Model
     
-      const user = UserMapper.toDomain(createUserDto, addressModel);
+      const user = UserMapper.toDomain(createUserArgs, addressModel);
       const userModel = new this.userModel(user);
 
       await addressModel.save();
       console.log('Successfully saved address information');
       const result = await userModel.save();
-      console.log('Successfully saved candidate information');
+      console.log('Successfully saved candidate information', result);
 
-      return result ;
+      return result
     } catch (e) {
       console.log(e.message);
       if(!isEmailUnique) {
-        throw new BadRequestException({field: 'email', message: e.message});  
+        throw new BadRequestException({field: 'email', message: e.message, statusCode: '404'});
       }
     }
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(updateUserArgs: UpdateUserArgs): Promise<User> {
     let isEmailUnique = true;
 
     try {
       console.log(
-        `Candidate: ${userId} | Executing update candidate details with payload: `,
-        JSON.stringify(updateUserDto),
+        `Candidate: ${updateUserArgs._id} | Executing update candidate details with payload: `,
+        JSON.stringify(updateUserArgs),
       );
 
       const userModelExists = await this.userModel
-        .findById({ _id: userId })
+        .findById({ _id: updateUserArgs._id })
         .populate('address');
 
         if (!userModelExists) {
-          throw new NotFoundError(`User: ${userId} | Candidate was not found.`);
+          throw new NotFoundError(`User: ${updateUserArgs._id} | Candidate was not found.`);
         }
 
-        let isEmailPresent =  await this.userModel.findOne({emailAddress : updateUserDto.emailAddress});
+        let isEmailPresent =  await this.userModel.findOne({emailAddress : updateUserArgs.emailAddress});
 
-      if(userModelExists.emailAddress===updateUserDto.emailAddress){
+      if(userModelExists.emailAddress===updateUserArgs.emailAddress){
         isEmailPresent=null
       }
 
@@ -86,7 +86,7 @@ export class UserService {
       //Update Address Model
       const address = await this.addressModel.findOneAndUpdate(
         { _id: userModelExists.address._id },
-        UserMapper.toAddressDto(updateUserDto.address),
+        UserMapper.toAddressDto(updateUserArgs.address),
       );
 
       console.log('Successfully updated address information');
@@ -94,8 +94,8 @@ export class UserService {
       //Update User Model
       const userModel = await this.userModel
         .findOneAndUpdate(
-          { _id: userId },
-          UserMapper.toDomain(updateUserDto, address),
+          { _id: updateUserArgs._id },
+          UserMapper.toDomain(updateUserArgs, address),
           { returnOriginal: false }
         ).populate('address');
 
@@ -104,26 +104,27 @@ export class UserService {
       return userModel;
     } catch (e) {
       if(!isEmailUnique) {
-        throw new BadRequestException({field: 'email', message: e.message});  
+         throw new BadRequestException({field: 'email', message: e.message, statusCode: '404'});
       }
       
     }
   }
 
-  async list(query): Promise<any> {
-    let userModel;
+  async list(query : any): Promise<UserList> {
+   
+    let userModel : any
     let search = query.search
 
     try {
-      var limit = parseInt(query.limit);
-      var page = parseInt(query.page)
-      var skip
+      let limit = parseInt(query.limit);
+      let page = parseInt(query.page)
+      let skip: any
 
       //limit
       limit || (limit = 4);
 
       if (page) {
-        limit;
+        limit ;
         skip = (page-1) * limit;
       }
       if (!search) {
@@ -160,7 +161,7 @@ export class UserService {
         ]
       });
 
-      if (query.sortColumn && query.sortType) {
+      if (query.hasOwnProperty('sortColumn') && query.hasOwnProperty('sortType')  && query.sortColumn && query.sortType) {
         let x = {};
         x[query.sortColumn] = query.sortType == 'asc' ? 1 : -1;
         userModel = await this.userModel.find(
@@ -202,12 +203,12 @@ export class UserService {
       }
 
       if (!userModel || !userModel.length) {
-        throw new NotFoundError(`Candidates were not found.`);
+        throw new Error(`Candidates were not found.`);
       }
 
       console.log('Successfully lists the candidate information');
 
-      return { items: userModel, total: userData.length };
+      return { items: userModel , total: userData.length };
     } catch (e) {
       console.log(
           'There was an error while listing the candidate information. Error Message: ',
@@ -215,11 +216,12 @@ export class UserService {
           '\n Stack: ',
           e.stack,
       );
-      return e.message;
+      throw new BadRequestException({field: 'email', message: e.message, statusCode: '404'});
     }
   }
 
-  async deleteMany(ids:any):Promise<any>  {
+  async deleteMany({ids}: DeleteUserArg):Promise<DeleteUser>  {
+
     try {
       await ids.map(async (id)=>{
         const userData = await this.userModel.findById(id);
@@ -238,5 +240,23 @@ export class UserService {
       return e.message;
     }
   }
-  
+
+  async  getUserById(id:string): Promise<any> {
+     try {
+
+       const user = await this.userModel.findOne({_id: id}).populate("address");
+
+       if(!user) {
+       throw new BadRequestException({message :"User not found!"})
+       }
+
+       return user;
+     }
+
+      catch (e) {
+       console.log(e.message)
+
+       return  e.message
+     }
+  }
 }

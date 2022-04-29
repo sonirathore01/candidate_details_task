@@ -1,6 +1,6 @@
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as candidateActions from './candidate.actions'
-import {catchError, exhaustMap, map, mergeMap} from "rxjs/operators";
+import {catchError, exhaustMap, map} from "rxjs/operators";
 import {CandidateService} from "../services/api-service.service";
 import {of} from "rxjs";
 import {Injectable} from "@angular/core";
@@ -16,11 +16,9 @@ export class CandidateEffects {
     this.actions$.pipe(
       ofType(candidateActions.getCandidates),
       exhaustMap(action =>
-        this.apiService.getAllCandidates({filterValue: action.filterValue,selectedPage: action.selectedPage, pageSize: action.pageSize, sortColumn: action.sortColumn, sortType: action.sortType}).pipe(
-          map(response => {
-            return candidateActions.getCandidatesSuccess({response})
-          }),
-          catchError((error: any) => of(candidateActions.getCandidatesFailure(error))))
+        this.apiService.getAllCandidates({search: action.search,page: action.page, limit: action.limit, sortColumn: action.sortColumn, sortType: action.sortType}).then(response => {
+          return candidateActions.getCandidatesSuccess(response)
+          }).catch((error: any) => of(candidateActions.getCandidatesFailure(error)))
       )
     )
   );
@@ -40,7 +38,7 @@ export class CandidateEffects {
     this.actions$.pipe(
       ofType(candidateActions.updateCandidate),
       exhaustMap(action =>
-        this.apiService.updateCandidate(action.candidate, action.id).pipe(
+        this.apiService.updateCandidate(action.candidate).pipe(
           map(response => candidateActions.updateCandidateSuccess(response)),
           catchError((error: any) => of(candidateActions.updateCandidateFailure(error))))
       )
@@ -50,7 +48,7 @@ export class CandidateEffects {
   deleteCandidate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(candidateActions.deleteCandidate),
-      exhaustMap(action => this.apiService.deleteCandidate(action.candidateIds).pipe(
+      exhaustMap(action => this.apiService.deleteCandidate(action).pipe(
         map(response => candidateActions.deleteCandidateSuccess(response)),
         catchError((error: any) => of(candidateActions.deleteCandidateFailure(error))))
       )

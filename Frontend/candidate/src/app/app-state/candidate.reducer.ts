@@ -10,7 +10,8 @@ export interface State {
   total?: number;
   deleteCandidateId: string[];
   error?: any,
-  status : string
+  status : string,
+  loading: boolean
 }
 
 export const initialState: State = {
@@ -19,16 +20,20 @@ export const initialState: State = {
   total: 0,
   deleteCandidateId: [],
   error : '',
-  status : ''
+  status : '',
+  loading: false
 };
 
 
 const candidateReducer = createReducer(
   initialState,
 
-  on(candidateActions.getCandidates, (state) => ({...state})),
+  on(candidateActions.getCandidates, (state) => ({...state, loading: true})),
   on(candidateActions.getCandidatesSuccess, (state, result) =>{
-    return  {...state, candidates: result.response.items, total: result.response.total}
+    if (result.errors && result.errors[0].message == "Candidates were not found."){
+      return  {...state , candidates: [], total:0};
+    }
+    return  {...state, candidates: result.data.user.items, total: result.data.user.total, loading: false}
   }),
   on(candidateActions.getCandidatesFailure, (state, result) =>{
     if (result['error']['text'] == "Candidates were not found."){
@@ -38,33 +43,34 @@ const candidateReducer = createReducer(
     }
   }),
 
-  on(candidateActions.addCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate})),
-  on(candidateActions.addCandidateSuccess, (state, result: UserModel) => {
+  on(candidateActions.addCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate, loading: true})),
+  on(candidateActions.addCandidateSuccess, (state, result: {data:{ createUser: UserModel}}) => {
     const candidates = undefined !== state.candidates ? _.cloneDeep(state.candidates) : [];
-    candidates.push(result);
+    candidates.push(result.data.createUser);
     return {
       ...state,
       candidates: candidates,
       status:"success",
       error : '',
-      total: state.total ? state.total + 1 : 1
+      total: state.total ? state.total + 1 : 1,
+      loading: false
     };
   }),
   on(candidateActions.addCandidateFailure, (state,result) => {
-    if(result.error) {
-      return  {...state , error : result.error.message, status : ''};
+    if(result.graphQLErrors) {
+      return  {...state , error : result.graphQLErrors[0].extensions.response, status : '', loading: false};
     }else {
       return {...state};
     }
-    
+
   }),
 
-  on(candidateActions.updateCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate})),
+  on(candidateActions.updateCandidate, (state, {candidate}) => ({...state, currentCandidate: candidate, loading: true})),
   on(candidateActions.updateCandidateSuccess, (state, result) => {
     let candidates: UserModel[] = undefined !== state.candidates ? _.cloneDeep(state.candidates) : [];
     candidates = candidates.map(can => {
-      if (can._id === result._id) {
-        can = result;
+      if (can._id === result.data.updateUser._id) {
+        can = result.data.updateUser;
       }
       return can;
     });
@@ -73,28 +79,30 @@ const candidateReducer = createReducer(
       candidates: candidates,
       status : "success",
       error : '',
-      total: state.total
+      total: state.total,
+      loading: false
     };
   }),
   on(candidateActions.updateCandidateFailure, (state,result) => {
-    if(result.error) {
-      return  {...state , error : result.error.message, status : ''};
+    if(result.graphQLErrors) {
+      return  {...state , error : result.graphQLErrors[0].extensions.response, status : '', loading: false};
     }else {
       return {...state};
     }
-    
+
   }),
 
-  on(candidateActions.deleteCandidate, (state, {candidateIds}) => ({...state, deleteCandidateId: candidateIds})),
+  on(candidateActions.deleteCandidate, (state, {ids}) => ({...state, deleteCandidateId: ids, loading: true})),
   on(candidateActions.deleteCandidateSuccess, (state, result) => {
     let candidates = undefined !== state.candidates ? _.cloneDeep(state.candidates) : [];
-    if (result.message == 'Data successfully deleted') {
+    if (result.data.deleteUser.message == 'Data successfully deleted') {
       candidates = candidates.filter(candidate => !state.deleteCandidateId.includes(candidate._id ? candidate._id : ''));
     }
     return {
       ...state,
       candidates,
-      total: state.total ? state.total - state.deleteCandidateId.length : 0
+      total: state.total ? state.total - state.deleteCandidateId.length : 0,
+      loading: false
     };
   }),
 
@@ -109,6 +117,7 @@ export const getCandidates = (state: State) => {
     candidates: state.candidates,
     total: state.total,
     error : state.error,
-    status:state.status
+    status:state.status,
+    loading: state.loading
   };
 };

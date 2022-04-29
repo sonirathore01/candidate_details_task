@@ -1,11 +1,8 @@
-import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../schema/user.schema';
-import { AddressDetailsDto } from '../dto/address-details.dto';
 import { Address } from '../schema/address.schema';
 import { SocialProfileSchema } from '../schema/social-profile.schema';
-import { SocialMediaProfileDetailsDto } from '../dto/social-media-profile-details.dto';
-import { PhoneNumberDetailsDto } from '../dto/phone-number-details.dto';
 import {PhoneNumberSchema} from "../schema/phone-number.schema";
+import {AddressArg, phoneNumberArg, socialProfileArg} from "../type/user-data.type";
 
 export class UserMapper {
   public static toDomain(data: any, address): User {
@@ -22,7 +19,7 @@ export class UserMapper {
   }
 
   public static toAddressDto(
-    data: AddressDetailsDto,
+    data: AddressArg,
     addressId?: string,
   ): Address {
     const dto = new Address();
@@ -38,7 +35,7 @@ export class UserMapper {
   }
 
   public static toSocialProfile(
-    data: SocialMediaProfileDetailsDto,
+    data: socialProfileArg,
   ): SocialProfileSchema {
     const dto = new SocialProfileSchema();
     dto.linkedin = data.linkedin;
@@ -49,7 +46,7 @@ export class UserMapper {
   }
 
   public static toPhoneNumber(
-      data: PhoneNumberDetailsDto,
+      data: phoneNumberArg,
   ): PhoneNumberSchema {
     const dto = new PhoneNumberSchema();
     dto.countryCode = data.countryCode;

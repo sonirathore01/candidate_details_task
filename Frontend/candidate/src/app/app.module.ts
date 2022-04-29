@@ -27,6 +27,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { MatSortModule } from '@angular/material/sort';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     StoreModule.forRoot(reducers, {
       metaReducers
     }),
-    EffectsModule.forRoot([CandidateEffects])
+    EffectsModule.forRoot([CandidateEffects]),
+    GraphQLModule
   ],
   providers: [],
   bootstrap: [AppComponent]

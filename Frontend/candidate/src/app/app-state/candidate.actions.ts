@@ -1,4 +1,5 @@
 import {createAction, props} from "@ngrx/store";
+import {ActionType} from "../shared/model/action.modal";
 
 export const GET_CANDIDATES = '[Candidate] Get Candidate';
 export const GET_CANDIDATES_SUCCESS = '[Candidate] Get Candidate Success';
@@ -18,7 +19,7 @@ export const DELETE_CANDIDATE_FAILURE = '[Candidate] Delete Candidate Failure';
 
 export const getCandidates = createAction(
   GET_CANDIDATES,
-  props<{filterValue: string, selectedPage: number, pageSize: number, sortColumn?: string, sortType?: string}>()
+  props<ActionType>()
 );
 
 export const getCandidatesSuccess = createAction(
@@ -48,7 +49,7 @@ export const addCandidateFailure = createAction(
 
 export const updateCandidate = createAction(
   UPDATE_CANDIDATE,
-  props<{candidate: any, id: any}>()
+  props<{candidate: any}>()
 );
 
 export const updateCandidateSuccess = createAction(
@@ -63,7 +64,7 @@ export const updateCandidateFailure = createAction(
 
 export const deleteCandidate = createAction(
   DELETE_CANDIDATE,
-  props<{candidateIds:string[]}>()
+  props<{ids: string[]}>()
 );
 
 export const deleteCandidateSuccess = createAction(
